@@ -1,0 +1,54 @@
+.row {
+  display: flex;
+  margin-left: -$offset-base;
+  margin-right: -$offset-base;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  padding: $offset-base;
+}
+
+.textarea {
+  margin: $offset-base 0 0;
+  height: 120px;
+}
+
+.label {
+  font-size: 12px;
+  margin: 0 $offset-small $offset-small 0;
+  display: inline-block;
+  font-weight: bold;
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  margin-left: -8px;
+  margin-right: -8px;
+
+  & > .input {
+    width: 50%;
+    margin: 0 8px 16px;
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 0 8px 16px;
+
+    label {
+      font-size: 12px;
+    }
+  }
+}
+
+.alert {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  z-index: 1;
+}

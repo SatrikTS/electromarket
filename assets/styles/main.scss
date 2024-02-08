@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+}
+
+.container {
+  width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 1366px) {
+    width: 100%;
+    padding: 0 16px;
+  }
+}
+
+a {
+  transition: color 0.25s ease-in-out;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+main {
+  min-height: calc(100vh - 325px);
+}
+
+ul.list {
+  list-style: square;
+  padding-left: 14px;
+
+  li {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.link {
+  color: $primary;
+  transition: all 0.25s ease-in-out;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+p {
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  padding: $offset-base;
+}
+
+.column-3 {
+  display: flex;
+  flex-direction: column;
+  width: 33%;
+}
+
+.column-4 {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  padding: $offset-small;
+}
+
+.column-5 {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+}
+
+.v-btn a {
+
+  &:hover {
+    color: inherit;
+  }
+}
+
+ul.special-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  /* Стили для элементов списка */
+  li {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Эффект при наведении на элемент списка */
+  li:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.alert-message {
+  position: fixed !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
