@@ -15,7 +15,10 @@
           </NuxtLink>
         </div>
         <div class="main-category">
-          <Category :maxViews="6" />
+          <Category
+            :categoryList="categoryList"
+            :columns="2"
+          />
           <v-btn
             depressed
             color="primary"
@@ -43,15 +46,13 @@
     <div class="container">
       <div class="main-recommendation">
         <ProductsList
-          :maxView="4"
-          :categoryId="1"
-          :isRandom="true"
+          :productList="productList.data"
         />
       </div>
     </div>
     <Caption caption="Бренды" />
     <div class="container">
-      <Brands />
+      <Brands :maxView="8" />
     </div>
     <Caption caption="Контакты" />
     <div class="container">
@@ -59,7 +60,25 @@
     </div>
   </div>
 </template>
-<script setup>
+<script
+  setup
+  lang="ts"
+>
+import { storeToRefs } from 'pinia';
+import { useCategoryStore } from '@/store/category';
+import { useProductsStore } from '~/store/products-store';
+import { ref } from 'vue';
+
+const { getProducts } = useProductsStore();
+const { productList } = storeToRefs(useProductsStore());
+const categoryStore = useCategoryStore();
+const { getCategoryList } = categoryStore;
+const categoryList = ref();
+
+await getProducts({ limit: 4 });
+const response = await getCategoryList(6, 0);
+
+categoryList.value = response.data;
 </script>
 <style
   scoped
@@ -73,22 +92,13 @@
     flex-direction: column;
     margin: $offset-base 0;
   }
-
-  .category {
-    min-width: 50%;
-
-    @media (max-width: $laptop) {
-      margin-left: -8px;
-      margin-right: -8px;
-    }
-  }
 }
 
 .main-banner {
   padding-right: 8px;
   min-width: 50%;
   width: 50%;
-  height: 450px;
+  height: 396px;
   position: relative;
   overflow: hidden;
 
@@ -122,6 +132,7 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
+    border-radius: 8px;
 
     &::before {
       position: absolute;
@@ -154,8 +165,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: -$offset-small;
-  margin-right: -$offset-small;
+
+  .category {
+    min-width: 50%;
+    grid-template-columns: 1fr 1fr;
+  }
 
   .main-link {
     display: flex;

@@ -42,6 +42,6 @@ function closeModal(e) {
   transform: translate(-50%, - 50%);
   background: $bg-main;
   padding: $offset-large;
-  border-radius: 3px;
+  border-radius: 8px;
 }
 </style>

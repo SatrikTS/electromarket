@@ -127,7 +127,17 @@ const productItem = ref()
 
 function addToCartStore(price, product) {
   inputVal.value++
-  addToCart(inputVal.value, price, product)
+
+  const cartProduct = {
+    article: product.article,
+    title: product.title,
+    price: product.price,
+    images: product.images,
+    id: product.id,
+    category: product.category
+  }
+
+  addToCart(inputVal.value, price, cartProduct)
 }
 
 function showImage(image) {

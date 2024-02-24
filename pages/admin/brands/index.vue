@@ -16,7 +16,7 @@
       <div class="category-list__item category-list__item--btns"></div>
     </div>
     <div
-      v-for="(item) in brandList"
+      v-for="(item) in brandsList.data"
       :key="item.title"
       class="category-list__content"
     >
@@ -62,13 +62,6 @@
     </template>
   </Modal>
   <v-alert
-    v-if="alertErrorText"
-    type="error"
-    class="alert-message"
-  >
-    {{ alertErrorText }}
-  </v-alert>
-  <v-alert
     v-if="alertWarningText"
     type="warning"
     class="alert-message"
@@ -88,50 +81,38 @@ definePageMeta({
 import { ref } from 'vue';
 import IconEdit from '@/assets/icons/IconEdit.vue';
 import IconRemove from '@/assets/icons/IconDelete.vue';
-import { useBrandsStore } from '../../../store/brands';
-
-const brandStore = useBrandsStore();
-const { getBrandsList, removeBrand } = brandStore;
+import { useBrandsStore } from '~/store/brands';
+import { storeToRefs } from 'pinia';
 
 const isShowModal = ref(false);
 const removeBrandId = ref();
-const brandList = ref();
-const alertErrorText = ref();
 const alertWarningText = ref();
+const { getBrandsList, removeBrand } = useBrandsStore();
+const { brandsList } = storeToRefs(useBrandsStore());
 
-const responseList = await getBrandsList();
-brandList.value = responseList.data;
+await getBrandsList();
 
 /**
  * Подтверждение открытия модалки
  * @param id
  */
-function confirmRemoveModal(id: number) {
+const confirmRemoveModal = (id: number) => {
   isShowModal.value = true;
   removeBrandId.value = id;
-}
+};
 
 /**
  * Удаление brand
  */
-async function deleteBrand() {
+const deleteBrand = async () => {
   const response = await removeBrand(removeBrandId.value);
-  console.log(response);
-  if (response.status === false) {
-    alertErrorText.value = response.message;
-  }
-
-  if (response.status) {
-    alertWarningText.value = response.message;
-    const brands = await getBrandsList();
-    brandList.value = brands.data;
-  }
+  alertWarningText.value = response;
+  await getBrandsList();
   isShowModal.value = false;
   setTimeout(() => {
-    alertErrorText.value = '';
     alertWarningText.value = '';
   }, 3000);
-}
+};
 </script>
 <style
   scoped

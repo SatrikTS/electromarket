@@ -1,19 +1,17 @@
 <template>
-  <div class='sort'>
-    <span class='sort-caption'>Сортировать по цене:</span>
-    <div class='sort-wrap'>
+  <div class="sort">
+    <span class="sort-caption">Сортировать по цене:</span>
+    <div class="sort-wrap">
       <Button
         :class="{ active: sortByPrice === 'low' }"
-        buttonStyle=''
-        size='small'
-        @click='getSortDataLow'
+        size="small"
+        @click="getSortDataLow"
       >Сначала дешевые
       </Button>
       <Button
         :class="{ active: sortByPrice === 'high' }"
-        buttonStyle=''
-        size='small'
-        @click='getSortDataHigh'
+        size="small"
+        @click="getSortDataHigh"
       >Сначала дорогие
       </Button>
     </div>
@@ -21,32 +19,30 @@
 </template>
 <script
   setup
-  lang='ts'
+  lang="ts"
 >
-import {ref} from 'vue'
-import {useCatalogStore} from '~/store/products-list'
-import {storeToRefs} from 'pinia'
+import { ref } from 'vue';
 
-const catalogStore = useCatalogStore()
-const {productQueryGetter} = storeToRefs(catalogStore)
-const {getProductList} = catalogStore
-const sortByPrice = ref()
-
-function getSortDataHigh() {
-  sortByPrice.value = 'high'
-  productQueryGetter.value.sort = 'price_desc'
-  getProductList(productQueryGetter.value)
+interface IEmits {
+  (e: 'sort', value: string): void,
 }
 
-function getSortDataLow() {
-  sortByPrice.value = 'low'
-  productQueryGetter.value.sort = 'price_asc'
-  getProductList(productQueryGetter.value)
-}
+const emit = defineEmits<IEmits>();
+const sortByPrice = ref();
+
+const getSortDataHigh = () => {
+  sortByPrice.value = 'high';
+  emit('sort', 'price_desc');
+};
+
+const getSortDataLow = () => {
+  sortByPrice.value = 'low';
+  emit('sort', 'price_asc');
+};
 </script>
 <style
   scoped
-  lang='scss'
+  lang="scss"
 >
 .sort {
   display: flex;
@@ -54,6 +50,7 @@ function getSortDataLow() {
   justify-content: flex-end;
   background: $bg-base;
   padding: $offset-small;
+  border-radius: 8px;
 
   @media (max-width: $mobile) {
     flex-direction: column;

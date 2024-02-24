@@ -23,7 +23,6 @@ const props = defineProps({
 .breadcrumbs {
   display: flex;
   align-items: center;
-  margin: 0 0 $offset-base;
   font-size: 14px;
 
   span {

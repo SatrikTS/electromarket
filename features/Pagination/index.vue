@@ -4,7 +4,8 @@
       v-if="totalCount"
       :class="classes['pagination__label']"
     >
-      Показано {{ currentCounterPosts }} из {{ totalCount }}
+      Показано {{ currentCounterPosts }}
+<!--      из {{ totalCount }}-->
     </div>
     <b></b>
     <div :class="classes['pagination__pages']">

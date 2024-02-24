@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="page">
     <Header />
-    <main>
-      <div class='container'>
+    <main class="page__main">
+      <div class="container">
         <slot />
       </div>
     </main>
@@ -11,9 +11,17 @@
 </template>
 <script setup>
 </script>
-<style scoped>
-</style>
-<script>
-</script>
-<style scoped>
+<style
+  lang="scss"
+>
+.page {
+
+  &__main {
+    padding:20px 0 40px;
+  }
+
+  h1 {
+    margin: 0 0 20px;
+  }
+}
 </style>

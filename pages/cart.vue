@@ -1,44 +1,25 @@
 <template>
   <div class="page">
-    <h1>Корзина</h1>
+    <h2>Корзина</h2>
+    <br />
     <div class="wrapper">
       <div
         class="final-content"
         v-show="isCartList"
       >
-        <div v-if="isOrderCompleteFinal">
-          <p>Поздравляем, Заказ оформлен!</p>
-          <p>Ожидайте с вами свяжуться, чтобы уточнить детали заказ</p>
-          <p>Транспортные расходы по доставке не входят в стоимость заказа и оплачиваются отдельно транспортной
-             компании
-          </p>
-        </div>
         <div v-if="cartList">
           <product-cart
             v-for="item in cartList"
-            :name="item.productData.name"
-            :description="item.productData.description"
-            :price="item.productData.price"
-            :img="item.productData.images"
-            :id="item.productId"
-            :feature="item.productData.feature"
-            :key="item.productData.name"
+            :data="item.productData"
             :count="item.count"
+            :id="item.productId"
+            :key="item.productId"
             @removeProductFromCart="showRemoveModal(item.productId)"
           />
         </div>
         <div v-else>
           Нет добавленных товаров
         </div>
-      </div>
-      <div
-        v-show="!isCartList"
-        class="final-content"
-      >
-        <OrderForm
-          :totalSum="totalSum"
-          @orderComplete="orderComplete"
-        />
       </div>
       <div class="final-result">
         <h3>Ваш заказ</h3>
@@ -52,21 +33,14 @@
             Общая стоимость: <b>{{ totalSum }} ₽.</b>
           </span>
         </div>
-        <Button
+        <v-btn
           v-if="isCartList"
           :disabled="totalCount > 0 ? false : true"
-          buttonStyle="success"
+          color="#27ae60"
           type="button"
           @click="getOrderForm"
         >Оформить заказ
-        </Button>
-        <Button
-          v-if="!isCartList"
-          buttonStyle="warning"
-          type="button"
-          @click="isCartList = true"
-        >Содержимое корзины
-        </Button>
+        </v-btn>
       </div>
     </div>
     <Transition
@@ -86,114 +60,97 @@
             </Button>
             <Button
               buttonStyle="danger"
-              @click="removeProductFromCart"
+              @click="confirmRemoveProductFromCart"
             >Удалить
             </Button>
           </div>
         </div>
       </Modal>
     </Transition>
-    <Transition
-      name="modal">
-      <AuthModal
-        :isShowModal="isShowAuthModal"
-      ></AuthModal>
-    </Transition>
-    {{ isShowAuthModal }}
   </div>
 </template>
-<script setup>
-import Modal from '../components/modal/index'
-import AuthModal from '../components/auth-modal/index'
-import { onMounted, watch, ref } from 'vue'
-import { getCookie } from '~/utils/cookie'
+<script
+  setup
+  lang="ts"
+>
+import Modal from '../components/modal/index';
+import { onMounted, watch, ref } from 'vue';
+import { getCookie } from '~/utils/cookie';
 
 definePageMeta({
-  layout: 'pages',
-})
-import { useCartStore } from '~/store/cart'
-import { useCatalogStore } from '~/store/products-list'
-import { storeToRefs } from 'pinia'
-import Button from '../features/Button/Button'
-import {useAuthStore} from "~/store/auth"
+  layout: 'checkout',
+});
+import { useCartStore } from '~/store/cart';
+import { useCatalogStore } from '~/store/products-list';
+import Button from '../features/Button/Button';
 
-const cartStore = useCartStore()
-const catalogStore = useCatalogStore()
-const { getProductList } = catalogStore
-const { productListGetter } = storeToRefs(catalogStore)
-const totalSum = ref()
-const totalCount = ref()
-const cartList = ref()
-const isCartList = ref(true)
-const isOrderCompleteFinal = ref(false)
-const isShowModal = ref(false)
-const isShowAuthModal = ref(false)
-const removeParam = ref()
-const { removeFromCart } = cartStore
-const authStore = useAuthStore()
-const { authenticateAdmin } = authStore
-const { authenticated, authStatusGetter } = storeToRefs(authStore);
+const cartStore = useCartStore();
+const catalogStore = useCatalogStore();
+const { getProductList } = catalogStore;
+const totalSum = ref();
+const totalCount = ref();
+const cartList = ref();
+const isCartList = ref(true);
+const isShowModal = ref(false);
+const removeParam = ref();
+const { removeFromCart } = cartStore;
+const token = useCookie('token');
 
-function removeProductFromCart() {
-  removeFromCart(removeParam.value)
-  removeParam.value = ''
-  isShowModal.value = false
+const confirmRemoveProductFromCart = () => {
+  removeFromCart(removeParam.value);
+  removeParam.value = '';
+  isShowModal.value = false;
 }
 
-function showRemoveModal(param) {
-  isShowModal.value = true
-  removeParam.value = param
+const showRemoveModal = (param) => {
+  isShowModal.value = true;
+  removeParam.value = param;
 }
 
-function getOrderForm() {
-  // if()
-  console.log(useCookie('token').value)
-  if(useCookie('token').value) {
-    isCartList.value = false
+const getOrderForm = async (): Promise<void> => {
+  const userToken = useCookie('userToken');
+  if (userToken.value) {
+    await navigateTo('/ordering');
   } else {
-    isShowAuthModal.value = true
+    await navigateTo('/checkout');
   }
-}
-
-function orderComplete() {
-  isCartList.value = true
-  isOrderCompleteFinal.value = true
-}
+};
 
 function closeModal(param) {
-  isShowModal.value = param
+  isShowModal.value = param;
 }
 
 onMounted(() => {
   if (cartStore.cartGetter) {
-    getProductList()
+    getProductList();
   }
 
-  totalSum.value = getCookie('cartSum')
-  totalCount.value = getCookie('cartCount')
-  if (getCookie('cartProducts')) cartList.value = JSON.parse(getCookie('cartProducts'))
-})
+  totalSum.value = getCookie('cartSum');
+  totalCount.value = getCookie('cartCount');
+  console.log(getCookie('cartProducts'));
+  if (getCookie('cartProducts')) cartList.value = JSON.parse(getCookie('cartProducts'));
+});
 
 watch(
   () => cartStore.addedCartProductGetter,
   (newValue) => {
-    cartList.value = newValue
+    cartList.value = newValue;
   },
-)
+);
 
 watch(
   () => cartStore.sumGetter,
   (newValue) => {
-    totalSum.value = newValue
+    totalSum.value = newValue;
   },
-)
+);
 
 watch(
   () => cartStore.cartGetter,
   (newValue) => {
-    totalCount.value = newValue
+    totalCount.value = newValue;
   },
-)
+);
 </script>
 <style
   scoped
@@ -204,23 +161,24 @@ watch(
 }
 
 .wrapper {
-  display: flex;
+  display: grid;
+  align-items: flex-start;
+  grid-template-columns: calc(62% - 16px) 38%;
+  gap: 16px;
 }
 
 .final-content {
-  flex: 1;
-  margin-right: $offset-large-2;
+  gap: 16px;
 }
 
 .final-result {
-  border: 1px solid #e5e5e5;
   display: flex;
-  transition: box-shadow 0.25s ease-in-out;
-  border-radius: 3px;
-  padding: $offset-base;
+  border-radius: 8px;
   flex-direction: column;
   align-items: flex-start;
-  width: 300px;
+  background: #f3f3f3;
+  border-radius: 8px;
+  padding: 24px;
 }
 
 .final-list {

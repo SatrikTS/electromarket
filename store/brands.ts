@@ -1,130 +1,69 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-interface Brands {
-  id: number;
-}
+export const useBrandsStore = defineStore('brandStore', () => {
+  const { $api } = useNuxtApp();
+  const brandsList = ref();
+  const brandItem = ref();
 
-export const useBrandsStore = defineStore({
-  id: 'brands-store',
-  state: () => {
-    return {
-      brandsList: null as Brands[] | null,
-      brandItem: null,
-    };
-  },
-  actions: {
-    async getBrandsList() {
-      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/brands?limit=1000`)
-      .then(response => response.json())
-      .then((response) => response)
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    async postBrand(data: any) {
-      const token = useCookie('token');
-      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/brands`, {
-        method: 'POST',
-        body: data,
+  const getBrandsList = async (limit?: number = 1000) => {
+    const { data } = await $api.get(`/brands?limit=${limit}`);
+    brandsList.value = data;
+  };
+
+  const postBrand = async (params: any) => {
+    const { data } = await $api.post('/brands', params,
+      {
         headers: {
-          'Authorization': 'Bearer ' + token.value,
+          'Content-Type': 'multipart/form-data',
         },
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    async putBrand(data: any, id: number) {
-      const token = useCookie('token');
-      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/brands/${id}`, {
-        method: 'PUT',
+      },
+    );
+    return data;
+  };
+
+  const putBrand = async (params: any, id: number) => {
+    const { data } = await $api.put(`/brands/${id}`, {
+      ...params,
+    });
+    return data.message;
+  };
+
+  const getBrandItem = async (id: string | number) => {
+    const { data } = await $api.get(`/brands/${id}`);
+    brandItem.value = data.data;
+  };
+
+  const removeBrand = async (id: number) => {
+    const { data } = await $api.delete(`/brands/${id}`);
+    return data.message;
+  };
+
+  const postBrandImages = async (files: FormData) => {
+    const { data } = await $api.post('/brand_images', files,
+      {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token.value,
+          'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify(data),
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    async getBrandItem(id: string | number) {
-      const token = useCookie('token');
-      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/brands/${id}`, {
-        method: 'GET',
-      })
-      .then(response => response.json())
-      .then((response) => {
-        return this.brandItem = response.data;
-      });
-    },
-    async removeBrand(id: number) {
-      const token = useCookie('token');
-      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/brands/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token.value,
-        },
-      })
-      .then(response=> response.json())
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    async postBrandImages(data: FormData) {
-      const token = useCookie('token');
-      return fetch(`${useRuntimeConfig().public.SERVER_URL}/brand_images`, {
-        method: 'POST',
-        body: data,
-        headers: {
-          'Authorization': 'Bearer ' + token.value,
-        },
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        } else {
-          return response.json();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    async removeBrandImages(id: number) {
-      const token = useCookie('token');
-      return fetch(`${useRuntimeConfig().public.SERVER_URL}/brand_images/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token.value,
-        },
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        } else {
-          return response.json();
-        }
-      })
-      .then((response) => {
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-  },
-  getters: {
-    brandsListListGetter: state => state.brandsList,
-    brandsItemGetter: state => state.brandItem,
-  },
+      },
+    );
+    return data.message;
+  };
+
+  const removeBrandImages = async (id: number) => {
+    const { data } = await $api.delete(`/brand_images/${id}`);
+    return data.message;
+  };
+
+  return {
+    brandsList,
+    brandItem,
+    getBrandsList,
+    postBrand,
+    postBrandImages,
+    putBrand,
+    getBrandItem,
+    removeBrand,
+    removeBrandImages,
+  };
 });

@@ -3,7 +3,7 @@
  * @param originalString
  * @param length
  */
-export function truncateString(originalString: string, length: number) {
+export const truncateString = (originalString: string, length: number) => {
   if (originalString?.length > length) {
     return originalString.slice(0, length) + '...';
   } else {

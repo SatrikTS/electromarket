@@ -44,7 +44,7 @@
         <div class="column-4 product-filters__row">
           <v-select
             v-model="brandValue"
-            :items="brandList"
+            :items="brandsList.data"
             item-text="title"
             item-value="id"
             label="Бренды"
@@ -163,18 +163,17 @@ import debounce from '~/utils/debounce'
 // stores
 const categoryStore = useCategoryStore()
 const catalogStore = useCatalogStore()
-const brandsStore = useBrandsStore()
 
 // getters
-const { categoryListGetter } = storeToRefs(categoryStore)
 const { productListGetter, productsTotalGetter } = storeToRefs(catalogStore)
 const { productQueryGetter } = storeToRefs(catalogStore)
-const { brandsListListGetter } = storeToRefs(brandsStore)
+
 
 // actions
 const { getCategoryList } = categoryStore
 const { getProductList, removeProductItem } = catalogStore
-const { getBrandsList } = brandsStore
+const {getBrandsList} = useBrandsStore()
+const { brandsList } = storeToRefs(useBrandsStore());
 
 // const
 const categoryValue = ref()
@@ -188,13 +187,11 @@ const categoryList = ref()
 const brandList = ref()
 
 getProductList()
+await getBrandsList()
 
 onMounted(async () => {
   const categoryResponse = await getCategoryList(1000)
   categoryList.value = categoryResponse.data
-
-  const brandResponse = await getBrandsList()
-  brandList.value = brandResponse.data
 })
 
 /**

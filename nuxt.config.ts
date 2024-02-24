@@ -29,31 +29,6 @@ export default defineNuxtConfig({
     },
     cache: false
   },
-  router: {
-    // middleware: ['auth'],
-    extendRoutes(routes: any, resolve: any) {
-      routes.push(
-        {
-          path: '/admin',
-          component: resolve(__dirname, 'pages/admin/index.vue'),
-          children: [
-            // {
-            //   path: '',
-            //   component: resolve(__dirname, 'pages/admin/admin.vue')
-            // },
-            {
-              path: 'products',
-              component: resolve(__dirname, 'pages/admin/categories.vue')
-            },
-            {
-              path: 'category',
-              component: resolve(__dirname, 'pages/admin/categories.vue')
-            }
-          ]
-        }
-      )
-    }
-  },
   transpile: [/@vue[\\/]composition-api/],
   modules: [
     '@pinia/nuxt',

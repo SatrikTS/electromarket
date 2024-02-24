@@ -8,6 +8,7 @@
         <div
           class='header-section'
         >
+          <Profile/>
           <HeaderCart
             :count='totalCount'
             :sum='totalSum'
@@ -44,6 +45,7 @@ import Logo from "@/features/Logo"
 import Phones from "@/features/Phones"
 import Address from "@/features/Address"
 import HeaderCart from "@/features/HeaderCart"
+import Profile from "@/components/profile"
 import {onMounted, ref, watch} from "vue"
 import {useCartStore} from "~/store/cart"
 
@@ -89,20 +91,6 @@ onMounted(() => {
   })
 
 })
-
-watch(
-  () => cartStore.sumGetter,
-  (newValue) => {
-    totalSum.value = newValue
-  },
-)
-
-watch(
-  () => cartStore.cartGetter,
-  (newValue) => {
-    totalCount.value = newValue
-  },
-)
 </script>
 <style
   scoped

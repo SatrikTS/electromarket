@@ -1,19 +1,52 @@
 <template>
-  <NuxtLink href='/cart' class='header-cart'>
-    <LogoCart class='icon'/>
-    <span v-if='count' class='count'>{{ count }}</span>
-    <span v-if='sum' class='sum'>{{ sum }} ₽.</span>
+  <NuxtLink
+    href="/cart"
+    class="header-cart"
+  >
+    <LogoCart class="icon" />
+    <span
+      v-if="totalCount"
+      class="count"
+    >{{ totalCount }}</span>
+    <span
+      v-if="totalSum"
+      class="sum"
+    >{{ totalSum }} ₽.</span>
   </NuxtLink>
 </template>
 <script setup>
 import LogoCart from '../../assets/icons/cart.vue'
+import { onMounted, ref, watch } from 'vue'
+import {useCartStore} from "~/store/cart"
 
-defineProps({
-  count: Number,
-  sum: Number
+
+const cartStore = useCartStore()
+const totalSum = ref(0)
+const totalCount = ref(0)
+
+onMounted(() => {
+  totalSum.value = getCookie('cartSum')
+  totalCount.value = getCookie('cartCount')
 })
+
+watch(
+  () => cartStore.sumGetter,
+  (newValue) => {
+    totalSum.value = newValue
+  },
+)
+
+watch(
+  () => cartStore.cartGetter,
+  (newValue) => {
+    totalCount.value = newValue
+  },
+)
 </script>
-<style scoped lang='scss'>
+<style
+  scoped
+  lang="scss"
+>
 .header-cart {
   display: flex;
   align-items: flex-end;

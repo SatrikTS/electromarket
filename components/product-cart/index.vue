@@ -1,39 +1,63 @@
 <template>
-  <div class='product-cart'>
+  <div class="product-cart">
     <NuxtLink
-      :to='{path: `/catalog/${id}`, query: {param: feature}}'
-      class='product-cart-img'>
+      :to="{path: `/catalog/${id}`, query: {param: data.category.title}}"
+      class="product-cart-img"
+    >
       <img
-        :src='MAIN_URL + img[0]?.img'
-        :alt='caption'
+        :src="MAIN_URL + data.images[0]?.img"
+        :alt="data.caption"
       >
     </NuxtLink>
-    <div class='product-cart-common'>
-      <div class='product-cart-common-top'>
+    <div class="product-cart-common">
+      <div class="product-cart-common-top">
         <NuxtLink
-          :to='{path: `/catalog/${id}`, query: {param: feature}}'
-          class='product-cart-caption'>{{ name }}</NuxtLink>
-        <span class='product-cart-price'><small>Цена:</small> {{ price }} ₽.</span>
+          :to="{path: `/products/${id}`, query: {param: data.category.title}}"
+          class="product-cart-caption"
+        >{{ data.name }}
+        </NuxtLink>
+        <span class="product-cart-price"><small>Цена:</small> {{ data.price }} ₽.</span>
       </div>
-      <div class='product-cart-common-bottom'>
-        <div class='product-cart-features'>
-          <div class='product-cart-category-link'>
+      <div class="product-cart-common-bottom">
+        <div class="product-cart-features">
+          <div class="product-cart-category-link">
             Категория:
             <NuxtLink
-              :to='{path: `/catalog/`, query: {param: feature}}'
-            ><i>{{ feature }}</i></NuxtLink>
+              :to="{path: `/products/`, query: {categories: data.category.title}}"
+            >
+              <i>{{ data.category.title }}</i>
+            </NuxtLink>
           </div>
-          <small>id товара: <b>{{ id }}</b></small>
-          <div class='product-cart-control'>
-            <Button size='small' @click='minusProductCount(id, count)'>-</Button>
-            <b class='product-cat-number'>{{ count }}</b>
-            <Button size='small' @click='plusProductCount(id, count)'>+</Button>
+          <small>id товара:
+            <b>{{ id }}</b>
+          </small>
+          <div class="product-cart-control">
+            <Button
+              size="small"
+              @click="minusProductCount(id, count)"
+            >-
+            </Button>
+            <b class="product-cat-number">{{ count }}</b>
+            <Button
+              size="small"
+              @click="plusProductCount(id, count)"
+            >+
+            </Button>
           </div>
-          <span class='product-cart-price'><small>Общая цена:</small> {{ count * price }} ₽.</span>
+          <span class="product-cart-price"><small>Общая цена:</small> {{ count * data.price }} ₽.</span>
         </div>
-        <div class='product-cart-btns'>
-          <Button buttonStyle='default' size='small'>В избранное</Button>
-          <Button buttonStyle='danger' size='small' @click='emit("removeProductFromCart")'>Удалить</Button>
+        <div class="product-cart-btns">
+          <Button
+            buttonStyle="default"
+            size="small"
+          >В избранное
+          </Button>
+          <Button
+            buttonStyle="danger"
+            size="small"
+            @click='emit("removeProductFromCart")'
+          >Удалить
+          </Button>
         </div>
       </div>
     </div>
@@ -41,51 +65,39 @@
 </template>
 <script
   setup
-  lang='ts'
+  lang="ts"
 >
-import {useCartStore} from "~/store/cart"
+import { useCartStore } from '~/store/cart';
 
-defineProps({
-  name: String,
-  description: String,
-  price: String || Number,
-  img: String,
-  id: String || Number,
-  feature: String,
-  count: Number
-})
-
-const emit = defineEmits(['removeProductFromCart'])
-const MAIN_URL = useRuntimeConfig().public.MAIN_URL
-const cartStore = useCartStore()
-const { plusProductItemCount, minusProductItemCount } = cartStore
-
-function truncateString(str: string, maxLength: number) {
-  if (str.length > maxLength) {
-    return str.substring(0, maxLength - 3) + '...'
-  } else {
-    return str
-  }
+interface Props {
+  data: any,
+  count: number,
+  id: number,
 }
+defineProps<Props>();
+
+const emit = defineEmits(['removeProductFromCart']);
+const MAIN_URL = useRuntimeConfig().public.MAIN_URL;
+const cartStore = useCartStore();
+const { plusProductItemCount, minusProductItemCount } = cartStore;
 
 const minusProductCount = (id: string | number, count: number) => {
-  if(count > 1) minusProductItemCount(id, count)
-}
+  if (count > 1) minusProductItemCount(id, count);
+};
 
 const plusProductCount = (id: string | number, count: number) => {
-  plusProductItemCount(id, count)
-}
-
+  plusProductItemCount(id, count);
+};
 </script>
 <style
   scoped
-  lang='scss'
+  lang="scss"
 >
 .product-cart {
   display: flex;
-  margin: 0 0 $offset-large;
+  margin: 0 0 $offset-base;
   border: 1px solid #e5e5e5;
-  border-radius: 3px;
+  border-radius: 8px;
   height: 190px;
 
   &:last-child {
@@ -97,7 +109,10 @@ const plusProductCount = (id: string | number, count: number) => {
   min-width: 150px;
   width: 250px;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     img {
@@ -107,7 +122,7 @@ const plusProductCount = (id: string | number, count: number) => {
 
   img {
     max-width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
     transition: all 0.25s ease-in-out;
   }
@@ -195,5 +210,4 @@ const plusProductCount = (id: string | number, count: number) => {
     color: $primary;
   }
 }
-
 </style>

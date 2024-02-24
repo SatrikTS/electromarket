@@ -29,7 +29,10 @@ export const useCartStore = defineStore({
       this.addedProductToCart = []
     },
     addToCart(value: number, price: string, product: any) {
-      if(getCookie('cartProducts')) this.addedProductToCart = JSON.parse(getCookie('cartProducts'))
+
+      if(getCookie('cartProducts')) {
+        this.addedProductToCart = JSON.parse(getCookie('cartProducts'))
+      }
       this.cartCount = value++
 
       if (getCookie('cartSum')) {

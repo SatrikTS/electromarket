@@ -1,44 +1,38 @@
 <template>
   <div
-    class='filters'
+    class="filters"
     :class="{ active: isActiveFilter }"
   >
-    <span class='filters__caption'>
+    <span class="filters__caption">
       Фильтры:
       <Button
-        v-if='isMobileSize'
-        buttonStyle='inverse'
-        class='filters__btn'
-        @click='isActiveFilter = !isActiveFilter'
+        v-if="isMobileSize"
+        buttonStyle="inverse"
+        class="filters__btn"
+        @click="isActiveFilter = !isActiveFilter"
       >
         <IconArrow />
       </Button>
     </span>
-    <div class='filters__wrap'>
-      <span class='filters-label'>Цена:</span>
-      <div class='filters-group filters-group--row'>
-        <TextInput
-          placeholder='От'
-          name='price_from'
-          type='number'
-          :min='0'
-          @input='debounceGetPriceMin'
-        />
-        <TextInput
-          placeholder='До'
-          name='price_from'
-          type='number'
-          @input='debounceGetPriceMax'
-        />
-      </div>
-      <span class='filters-label'>Производители:</span>
-      <div class='filters-group'>
+    <div class="filters__wrap">
+      <span class="filters-label">Цена:</span>
+      <v-range-slider
+        v-model="priceRange"
+        :max="maxPriceProduct"
+        :min="0"
+        :step="10"
+        thumb-label="always"
+        class="filters-slider"
+      >
+      </v-range-slider>
+      <span class="filters-label">Производители:</span>
+      <div class="filters-group">
         <Checkbox
-          v-for='item in brandsList'
+          v-for="item in brandsList.data"
           :key="item.title"
-          :name='item.title'
-          :id='item.title'
-          @change='getFiltersByBrand'
+          :name="item.title"
+          :id="item.title"
+          @change="getFiltersByBrand"
         />
       </div>
     </div>
@@ -46,89 +40,59 @@
 </template>
 <script
   setup
-  lang='ts'
+  lang="ts"
 >
-import {onMounted, ref} from 'vue'
-import {storeToRefs} from 'pinia'
-import {useCatalogStore} from '~/store/products-list'
-import {useBrandsStore} from '../../store/brands'
-import debounce from '../../utils/debounce'
-import {MAX_PRICE} from '../../constants'
-import {updateScreenSize} from '../../utils/updateResize'
-import IconArrow from '../../assets/icons/IconArrow.vue'
+import { onMounted, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useBrandsStore } from '../../store/brands';
+import debounce from '../../utils/debounce';
+import { updateScreenSize } from '../../utils/updateResize';
+import IconArrow from '../../assets/icons/IconArrow.vue';
 
-const emit = defineEmits(['getFiltersData'])
+interface Props {
+  maxPriceProduct: number;
+}
 
-const catalogStore = useCatalogStore()
-const brandsStore = useBrandsStore()
-const {getBrandsList} = brandsStore
-const {getProductList} = catalogStore
-const {activeCategoryGetter, productQueryGetter} = storeToRefs(catalogStore)
-const {brandsListListGetter} = storeToRefs(brandsStore)
-const brandsNameFiltersList = ref([])
-const minPrice = ref()
-const maxPrice = ref()
-const isMobileSize = ref(false)
-const isActiveFilter = ref(false)
-const brandsList = ref()
-
-const responseBrands = await getBrandsList()
-brandsList.value = responseBrands.data
+const props = defineProps<Props>();
+const emit = defineEmits(['getFiltersByBrand', 'updatePrice']);
+const priceRange = ref([0, props.maxPriceProduct]);
+const { getBrandsList } = useBrandsStore();
+const brandsNameFiltersList = ref([]);
+const isMobileSize = ref(false);
+const isActiveFilter = ref(false);
+const { brandsList } = storeToRefs(useBrandsStore());
+await getBrandsList();
 
 function getFiltersByBrand(e) {
   if (e.target.checked) {
     brandsNameFiltersList.value.includes(e.target.name) ? brandsNameFiltersList.value
-      : brandsNameFiltersList.value.push(e.target.name)
-    emit('getFiltersByBrand', brandsNameFiltersList.value)
+      : brandsNameFiltersList.value.push(e.target.name);
+    emit('getFiltersByBrand', brandsNameFiltersList.value);
   } else {
-    const findBrandIndex = brandsNameFiltersList.value.findIndex(item => item === e.target.name)
+    const findBrandIndex = brandsNameFiltersList.value.findIndex(item => item === e.target.name);
     brandsNameFiltersList.value.includes(e.target.name) ? brandsNameFiltersList.value.splice(findBrandIndex, 1)
-      : brandsNameFiltersList.value
-    emit('getFiltersByBrand', brandsNameFiltersList.value)
+      : brandsNameFiltersList.value;
+    emit('getFiltersByBrand', brandsNameFiltersList.value);
   }
-}
-
-function debounceGetPriceMin(e) {
-  debounce(() => {
-    getPriceMin(e)
-  }, 1000)
-}
-
-function debounceGetPriceMax(e) {
-  debounce(() => {
-    getPriceMax(e)
-  }, 1000)
-}
-
-function getPriceMin(e) {
-  if (!e.target.value) {
-    minPrice.value = 0
-  } else {
-    minPrice.value = e.target.value
-  }
-  emit('getFiltersByMinPrice', minPrice.value)
-}
-
-function getPriceMax(e) {
-  if (!e.target.value) {
-    maxPrice.value = MAX_PRICE
-  } else {
-    maxPrice.value = e.target.value
-  }
-  emit('getFiltersByMaxPrice', maxPrice.value)
 }
 
 onMounted(() => {
-  isMobileSize.value = updateScreenSize()
+  isMobileSize.value = updateScreenSize();
 
   window.addEventListener('resize', () => {
-    isMobileSize.value = updateScreenSize()
-  })
-})
+    isMobileSize.value = updateScreenSize();
+  });
+});
+
+watch(priceRange, () => {
+  debounce(() => {
+    emit('updatePrice', priceRange.value);
+  }, 1000);
+});
 </script>
 <style
   scoped
-  lang='scss'
+  lang="scss"
 >
 .filters {
   height: 100%;
@@ -140,10 +104,12 @@ onMounted(() => {
   }
 
   &__caption {
-    font-size: 20px;
+    font-size: 16px;
+    line-height: 49px;
     background: $bg-base;
-    padding: 12px 8px;
+    padding: 0 8px;
     width: 100%;
+    border-radius: 8px;
 
     @media (max-width: $mobile) {
       display: flex;
@@ -225,6 +191,11 @@ onMounted(() => {
 .filters-group {
   margin: 16px 0;
   width: 100%;
+  max-height: 400px;
+  overflow: scroll;
+  background: $bg-base;
+  border-radius: 8px;
+  padding: 8px;
 
   &--row {
     display: flex;
@@ -242,5 +213,10 @@ onMounted(() => {
       }
     }
   }
+}
+
+.filters-slider {
+  width: 100%;
+  margin: 24px 0 0 !important;
 }
 </style>

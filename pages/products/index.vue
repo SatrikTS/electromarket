@@ -1,42 +1,29 @@
 <template>
-  <div>
+  <div class="products">
     <h1>Каталог</h1>
     <Breadcrumbs :catalogName="route.query.categories" />
-    <Caption
-      :caption="route.query.categories"
-      style="margin: 0 0 16px; padding: 16px"
-    />
-    <div
-      v-if="route.query.categories"
-    >
+    <Caption :caption="route.query.categories" />
+    <div v-if="route.query.categories">
       <div class="catalog">
         <div class="column-5 filters-group">
           <Filters
-            :isMobileSize="isMobileSize"
+            :maxPriceProduct="maxListPrice?.price"
             @getFiltersByBrand="getFiltersByBrand"
-            @getFiltersByMinPrice="getFiltersByMinPrice"
-            @getFiltersByMaxPrice="getFiltersByMaxPrice"
+            @updatePrice="updateFilterPrice"
           />
         </div>
         <div class="content">
-          <Sort />
-          <ProductsList
-            :isLoading="isLoading"
-            :catalogCategory="route.query.param"
-            :category="route.query.categoryId"
-          />
+          <Sort class="sort" @sort="sortFilter" />
+          <ProductsList :productList="productList.data" />
           <div class="pagination">
             <Pagination
-              :totalCount="productsTotalGetter"
+              :totalCount="productList.total"
               @goToPage="goToPage"
               @switchPageList="switchPageList"
             />
           </div>
         </div>
       </div>
-    </div>
-    <div v-else>
-      404
     </div>
   </div>
 </template>
@@ -46,59 +33,81 @@ import { storeToRefs } from 'pinia'
 definePageMeta({
   layout: 'catalog',
 })
-import { useCatalogStore } from '~/store/products-list'
+import { useProductsStore } from '~/store/products-store'
 
-const catalogStore = useCatalogStore()
-const { getProductList } = catalogStore
+const { getProducts } = useProductsStore()
+const { productList } = storeToRefs(useProductsStore())
 const route = useRoute()
-const productOnPage = ref(20)
-const { activeCategoryGetter, productQueryGetter, productsTotalGetter } = storeToRefs(catalogStore)
 const activeCategory = ref(route.query.categories)
-const isLoading = ref(false)
+const maxListPrice = ref()
+
+const filtersParams = reactive({
+  page: 1,
+  limit: 20,
+  categories: activeCategory.value,
+  brands: '',
+  min_price: 0,
+  max_price: 1000000000,
+})
+
+await getProducts(filtersParams)
+
+maxListPrice.value = productList.value.data.reduce((prevItem, currentItem) => {
+  return (parseInt(prevItem.price) > parseInt(currentItem.price)) ? prevItem : currentItem;
+});
 
 /**
  *
  * @param {number} pageNum - Number of page products list
  */
-function goToPage(pageNum) {
-  getProductList(pageNum, productOnPage.value, route.query.categoryId)
+const goToPage = async (pageNum) => {
+  filtersParams.page = pageNum
+  await getProducts(filtersParams)
 }
 
-function switchPageList(param) {
-  productQueryGetter.value.limit = param
-  getProductList(productQueryGetter.value)
+const switchPageList = async (param) => {
+  filtersParams.limit = param
+  filtersParams.page = 1
+  await getProducts(filtersParams)
 }
 
-function getFiltersByBrand(brandName) {
-  productQueryGetter.value.brands = brandName
-  productQueryGetter.value.categories = route.query.categories
-  getProductList(productQueryGetter.value)
+const getFiltersByBrand = async (brandName) => {
+  filtersParams.brands = brandName
+  await getProducts(filtersParams)
 }
 
-function getFiltersByMinPrice(minPrice) {
-  productQueryGetter.value.min_price = minPrice
-  getProductList(productQueryGetter.value)
+const updateFilterPrice = async (value) => {
+  filtersParams.min_price = value[0]
+  filtersParams.max_price = value[1]
+  filtersParams.page = 1
+  await getProducts(filtersParams)
 }
 
-function getFiltersByMaxPrice(maxPrice) {
-  productQueryGetter.value.max_price = maxPrice
-  getProductList(productQueryGetter.value)
+const sortFilter = async (value) => {
+  filtersParams.sort = value
+  await getProducts(filtersParams)
 }
-
-async function initProductList() {
-  productQueryGetter.value.categories = activeCategory.value
-  isLoading.value = true
-  await getProductList(productQueryGetter.value)
-  isLoading.value = false
-
-}
-
-initProductList()
 </script>
 <style
   scoped
   lang="scss"
 >
+.products {
+  display: grid;
+  gap: 16px;
+  width: 1200px;
+  margin: 0 auto;
+
+  .caption {
+    padding: 16px 8px;
+    border-radius: 8px;
+  }
+
+  .sort {
+    margin: 0 0 16px;
+  }
+}
+
 .catalog {
   display: flex;
 
@@ -107,6 +116,7 @@ initProductList()
   }
 
   .filters-group {
+
     @media (max-width: $mobile) {
       width: 100%;
     }

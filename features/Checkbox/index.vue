@@ -18,6 +18,17 @@ defineProps({
   flex-direction: row-reverse;
   align-items: center;
   justify-content: flex-end;
+  font-size: 14px;
+  transition: color ease-in-out 0.25s;
+
+  &:hover {
+    color: #1890ff;
+
+    .checkbox-inner {
+      border-color: #1890ff;
+    }
+  }
+
 }
 
 input {

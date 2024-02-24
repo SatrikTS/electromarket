@@ -89,7 +89,7 @@ defineProps({
 
   &.inverse {
     background: #fff;
-    border-color: $danger;
+    border-color: #d9d9d9;
   }
 
   &.ghost {

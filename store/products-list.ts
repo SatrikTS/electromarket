@@ -33,6 +33,7 @@ export const useCatalogStore = defineStore({
      * @param param
      */
     getProductList(param: any) {
+      console.log(param);
       const urlParam = param ? `${queryString.stringify(param, {arrayFormat: 'comma'})}`
         : `${queryString.stringify(this.productQuery, {arrayFormat: 'bracket'})}`
       const url = `${useRuntimeConfig().public.SERVER_URL}/products?${urlParam}`

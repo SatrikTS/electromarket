@@ -1,9 +1,9 @@
 <template>
   <section class="brands">
     <div
-      class='brand-item'
-      v-for='item in brandsList'
-      :key='item.id'
+      class="brand-item"
+      v-for="item in brandsList.data"
+      :key="item.id"
     >
       <a
         class="brand-item__wrap"
@@ -15,7 +15,7 @@
           alt="item.title"
           width="218"
           height="143"
-          key='item.id'
+          key="item.id"
         >
         <span v-else>{{ item.title }}</span>
       </a>
@@ -24,22 +24,27 @@
 </template>
 <script
   setup
-  lang='ts'
+  lang="ts"
 >
-import {ref} from 'vue'
-import {useBrandsStore} from '../../store/brands'
+import { useBrandsStore } from '../../store/brands';
+import { storeToRefs } from 'pinia';
 
-const brandsStore = useBrandsStore()
-const {getBrandsList} = brandsStore
-const MAIN_URL = useRuntimeConfig().public.MAIN_URL
-const brandsList = ref()
+interface Props {
+  maxView: number;
+}
 
-const response = await getBrandsList()
-brandsList.value = response.data
+const props = defineProps<Props>();
+
+const { getBrandsList } = useBrandsStore();
+const { brandsList } = storeToRefs(useBrandsStore());
+
+const MAIN_URL = useRuntimeConfig().public.MAIN_URL;
+
+await getBrandsList(props.maxView);
 </script>
 <style
   scoped
-  lang='scss'
+  lang="scss"
 >
 .brands {
   display: flex;
@@ -59,7 +64,7 @@ brandsList.value = response.data
   display: flex;
   align-items: center;
   transition: box-shadow 0.25s ease-in-out;
-  border-radius: 3px;
+  border-radius: 8px;
   overflow: hidden;
   padding: 8px;
 
