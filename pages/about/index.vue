@@ -1,11 +1,33 @@
 <template>
-  <h1>О компании</h1>
-  <p>This page will be displayed at the /about route.</p>
+  <div class="about">
+    <h1>{{ aboutPost.data.title }}</h1>
+    <div v-if="!isLoading" v-html="aboutPost.data.main_text"></div>
+    <div class="about__images">
+      <CardSlider :images="aboutPost.data.images"></CardSlider>
+    </div>
+  </div>
 </template>
-<script setup>
+<script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useAboutStore } from '@/store/about-store';
+
 definePageMeta({
   layout: "pages",
 })
+
+const { getAboutData, isLoading } = useAboutStore();
+const { aboutPost} = storeToRefs(useAboutStore());
+
+await getAboutData();
+
 </script>
-<style scoped>
+<style scoped lang="scss">
+.about {
+  position: relative;
+
+  &__images {
+    max-width: 900px;
+    margin: 16px auto;
+  }
+}
 </style>

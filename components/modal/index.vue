@@ -1,9 +1,9 @@
 <template>
   <div
-    class='modal'
+    class='modal-alt'
     @click='closeModal'
   >
-    <div class='modal-window'>
+    <div class='modal-alt-window'>
       <slot />
     </div>
   </div>
@@ -26,7 +26,7 @@ function closeModal(e) {
   scoped
   lang='scss'
 >
-.modal {
+.modal-alt {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -35,7 +35,7 @@ function closeModal(e) {
   background: rgba(0, 0, 0, .5);
 }
 
-.modal-window {
+.modal-alt-window {
   position: fixed;
   top: 50%;
   left: 50%;

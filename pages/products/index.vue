@@ -52,9 +52,12 @@ const filtersParams = reactive({
 
 await getProducts(filtersParams)
 
-maxListPrice.value = productList.value.data.reduce((prevItem, currentItem) => {
-  return (parseInt(prevItem.price) > parseInt(currentItem.price)) ? prevItem : currentItem;
-});
+if(productList.value.data.length > 0) {
+  maxListPrice.value = productList.value.data.reduce((prevItem, currentItem) => {
+    return (parseInt(prevItem.price) > parseInt(currentItem.price)) ? prevItem : currentItem;
+  });
+}
+
 
 /**
  *
@@ -98,6 +101,10 @@ const sortFilter = async (value) => {
   width: 1200px;
   margin: 0 auto;
 
+  @media (max-width: $desktop) {
+    max-width: 100%;
+  }
+
   .caption {
     padding: 16px 8px;
     border-radius: 8px;
@@ -105,6 +112,16 @@ const sortFilter = async (value) => {
 
   .sort {
     margin: 0 0 16px;
+  }
+
+  .product-list {
+    @media (max-width: $laptop) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: $mobile) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 

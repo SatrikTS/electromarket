@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const useAuthorisationStore = defineStore('authStore', () => {
   const { $api } = useNuxtApp();
+  const silentToken = ref()
 
   const authUser = async (dataForm) => {
     const { data } = await $api.post('/login', dataForm,
@@ -17,6 +18,31 @@ export const useAuthorisationStore = defineStore('authStore', () => {
     userToken.value = data.token;
     userId.value = data.userId;
   };
+
+  const authYandex = async (userData) => {
+      const { data} = await $api.post('/login_yandex', userData)
+      const userToken = useCookie('userToken', { maxAge: 10000 });
+      const userId = useCookie('userId', { maxAge: 10000 });
+      userToken.value = data.token;
+      userId.value = data.userId;
+  }
+
+  const saveVKSilentToken = async (token) => {
+    const {data} = await $api.post('/login_vk', token)
+    const userToken = useCookie('userToken', { maxAge: 10000 });
+    const userId = useCookie('userId', { maxAge: 10000 });
+    userToken.value = data.token;
+    userId.value = data.userId;
+  }
+
+  const authVK = (userData) => {
+
+    // const { data} = await $api.post('/login_yandex', userData)
+    // const userToken = useCookie('userToken', { maxAge: 10000 });
+    // const userId = useCookie('userId', { maxAge: 10000 });
+    // userToken.value = data.token;
+    // userId.value = data.userId;
+  }
 
   const registrationUser = async (dataForm) => {
     const { data } = await $api.post('/register', dataForm,
@@ -59,5 +85,9 @@ export const useAuthorisationStore = defineStore('authStore', () => {
     logoutUser,
     registrationUser,
     verificationUser,
+    authYandex,
+    saveVKSilentToken,
+    silentToken,
+    authVK
   };
 });

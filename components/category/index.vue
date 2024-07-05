@@ -58,6 +58,7 @@ const columnsStyled = computed(() => {
 });
 
 const handleCategory = async (item) => {
+  console.log(item);
   if (item.child == '[]' || !item.child) {
     await navigateTo(`${location.origin}/products?categories=${item.title}`, {
       external: true,
@@ -73,6 +74,10 @@ const handleCategory = async (item) => {
 >
 .category {
 
+  @media (max-width: $mobile) {
+    margin: 0 0 12px;
+  }
+
   &__wrap {
     display: grid;
     gap: 10px;
@@ -84,7 +89,6 @@ const handleCategory = async (item) => {
     }
 
     @media (max-width: $mobile) {
-      grid-template-columns: repeat(1, 1fr) !important;
       grid-auto-rows: 130px;
     }
 
@@ -116,6 +120,8 @@ const handleCategory = async (item) => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
+    padding: 8px;
   }
 
   &__image {
@@ -123,6 +129,11 @@ const handleCategory = async (item) => {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    @media (max-width: $mobile) {
+      width: 70px;
+      height: 70px;
+    }
 
     img {
       width: 100%;
@@ -143,7 +154,11 @@ const handleCategory = async (item) => {
   &__data {
     display: flex;
     flex-direction: column;
-    padding: 8px
+    padding: 8px;
+
+    @media (max-width: $mobile) {
+      padding: 0;
+    }
   }
 }
 </style>

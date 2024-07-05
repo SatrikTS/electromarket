@@ -3,15 +3,16 @@
     href="/cart"
     class="header-cart"
   >
+    <span class="header-cart-title">Корзина</span>
     <LogoCart class="icon" />
     <span
       v-if="totalCount"
       class="count"
     >{{ totalCount }}</span>
-    <span
-      v-if="totalSum"
-      class="sum"
-    >{{ totalSum }} ₽.</span>
+<!--    <span-->
+<!--      v-if="totalSum"-->
+<!--      class="sum"-->
+<!--    >{{ totalSum }} ₽.</span>-->
   </NuxtLink>
 </template>
 <script setup>
@@ -53,12 +54,27 @@ watch(
   position: relative;
   color: $text;
 
+  &-title {
+    @media (max-width: $mobile) {
+      display: none;
+    }
+  }
+
   &:hover {
     color: $primary;
+
+    .icon {
+      fill: $primary;
+    }
   }
 
   svg {
     width: 32px !important;
+
+    @media (max-width: $mobile) {
+      width: 32px !important;
+      height: 32px;
+    }
   }
 }
 
@@ -78,7 +94,7 @@ watch(
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  left: 12px;
+  right: -5px;
   top: -5px
 }
 

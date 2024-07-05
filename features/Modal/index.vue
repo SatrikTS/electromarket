@@ -42,7 +42,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 </script>
-<style lang='scss'>
+<style lang='scss' scoped>
 .modal-overlay {
   position: fixed;
   top: 0;

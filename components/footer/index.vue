@@ -4,7 +4,7 @@
       <div class='footer-wrap'>
         <div class='footer-top'>
           <Logo />
-          <Menu />
+          <MenuSecondary />
         </div>
         <div class='footer-bottom'>
           <Address />

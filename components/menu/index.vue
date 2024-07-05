@@ -15,6 +15,7 @@
       </Button>
       <Logo />
       <div class='menu__cart'>
+        <Profile/>
         <HeaderCart
           :count='totalCount'
           :sum='totalSum'
@@ -159,6 +160,7 @@ watch(
   }
 
   &__cart {
+    display: flex;
 
   }
 

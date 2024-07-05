@@ -11,29 +11,32 @@
         class="filters__btn"
         @click="isActiveFilter = !isActiveFilter"
       >
-        <IconArrow />
+        <IconFilter />
       </Button>
     </span>
     <div class="filters__wrap">
-      <span class="filters-label">Цена:</span>
-      <v-range-slider
-        v-model="priceRange"
-        :max="maxPriceProduct"
-        :min="0"
-        :step="10"
-        thumb-label="always"
-        class="filters-slider"
-      >
-      </v-range-slider>
-      <span class="filters-label">Производители:</span>
-      <div class="filters-group">
-        <Checkbox
-          v-for="item in brandsList.data"
-          :key="item.title"
-          :name="item.title"
-          :id="item.title"
-          @change="getFiltersByBrand"
-        />
+      <div class="filters__overlay" @click="isActiveFilter = !isActiveFilter"></div>
+      <div class="filters__list">
+        <span class="filters-label">Цена:</span>
+        <v-range-slider
+          v-model="priceRange"
+          :max="maxPriceProduct"
+          :min="0"
+          :step="10"
+          thumb-label="always"
+          class="filters-slider"
+        >
+        </v-range-slider>
+        <span class="filters-label">Производители:</span>
+        <div class="filters-group">
+          <Checkbox
+            v-for="item in brandsList.data"
+            :key="item.title"
+            :name="item.title"
+            :id="item.title"
+            @change="getFiltersByBrand"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -47,7 +50,7 @@ import { storeToRefs } from 'pinia';
 import { useBrandsStore } from '../../store/brands';
 import debounce from '../../utils/debounce';
 import { updateScreenSize } from '../../utils/updateResize';
-import IconArrow from '../../assets/icons/IconArrow.vue';
+import IconFilter from '../../assets/icons/IconFilter.vue';
 
 interface Props {
   maxPriceProduct: number;
@@ -61,6 +64,8 @@ const brandsNameFiltersList = ref([]);
 const isMobileSize = ref(false);
 const isActiveFilter = ref(false);
 const { brandsList } = storeToRefs(useBrandsStore());
+const overlay = ref()
+
 await getBrandsList();
 
 function getFiltersByBrand(e) {
@@ -115,23 +120,39 @@ watch(priceRange, () => {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin: 0 0 16px;
     }
   }
 
   &__wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     padding: $offset-base 0;
-    transition: all .55s ease-in-out;
+    transition: all 0.55s ease-in-out;
+    z-index: 3;
 
     @media (max-width: $mobile) {
       overflow: hidden;
-      max-height: 0;
       flex-direction: column;
       padding: 0;
-      opacity: 0;
-      margin: $offset-base 0 0;
+      left: -100%;
+      width: 100%;
+      position: fixed;
+      max-height: fit-content;
+      z-index: 2;
+      height: 100vh;
+      top: 0px;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    @media (max-width: $mobile) {
+      max-width: 250px;
+      z-index: 3;
+      position: relative;
+      background: #fff;
     }
   }
 
@@ -145,7 +166,6 @@ watch(priceRange, () => {
 
     svg {
       transition: transform 0.25s ease-in-out;
-      transform: rotate(90deg);
     }
 
     span {
@@ -171,14 +191,24 @@ watch(priceRange, () => {
     }
   }
 
-  &.active {
-    .filters__btn svg {
-      transform: rotate(-90deg);
-    }
+  &__overlay {
 
+    @media (max-width: $mobile) {
+      background: #101111;
+      bottom: 0;
+      left: 0;
+      opacity: .4;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 2;
+      display: block;
+    }
+  }
+
+  &.active {
     .filters__wrap {
-      max-height: 1000px;
-      opacity: 1;
+      left: 0;
     }
   }
 }
@@ -196,6 +226,10 @@ watch(priceRange, () => {
   background: $bg-base;
   border-radius: 8px;
   padding: 8px;
+
+  @media (max-width: $mobile) {
+    max-height: calc(100vh - 158px);
+  }
 
   &--row {
     display: flex;
@@ -218,5 +252,9 @@ watch(priceRange, () => {
 .filters-slider {
   width: 100%;
   margin: 24px 0 0 !important;
+
+  @media (max-width: $mobile) {
+    padding: 0 18px;
+  }
 }
 </style>

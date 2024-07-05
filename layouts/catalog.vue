@@ -7,11 +7,6 @@
     <Footer/>
   </div>
 </template>
-<script>
-export default {
-  name: "catalog",
-}
-</script>
 <style scoped lang='scss'>
 .catalog {
   display: flex;

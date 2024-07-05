@@ -1,7 +1,7 @@
 <template>
   <div class="product-cart">
     <NuxtLink
-      :to="{path: `/catalog/${id}`, query: {param: data.category.title}}"
+      :to="{path: `/catalog/${id}`, query: {param: data?.category.title}}"
       class="product-cart-img"
     >
       <img
@@ -12,25 +12,14 @@
     <div class="product-cart-common">
       <div class="product-cart-common-top">
         <NuxtLink
-          :to="{path: `/products/${id}`, query: {param: data.category.title}}"
+          :to="{path: `/products/${id}`, query: {param: data?.category.title}}"
           class="product-cart-caption"
-        >{{ data.name }}
+        >{{ data.title }}
         </NuxtLink>
         <span class="product-cart-price"><small>Цена:</small> {{ data.price }} ₽.</span>
       </div>
       <div class="product-cart-common-bottom">
         <div class="product-cart-features">
-          <div class="product-cart-category-link">
-            Категория:
-            <NuxtLink
-              :to="{path: `/products/`, query: {categories: data.category.title}}"
-            >
-              <i>{{ data.category.title }}</i>
-            </NuxtLink>
-          </div>
-          <small>id товара:
-            <b>{{ id }}</b>
-          </small>
           <div class="product-cart-control">
             <Button
               size="small"
@@ -47,11 +36,6 @@
           <span class="product-cart-price"><small>Общая цена:</small> {{ count * data.price }} ₽.</span>
         </div>
         <div class="product-cart-btns">
-          <Button
-            buttonStyle="default"
-            size="small"
-          >В избранное
-          </Button>
           <Button
             buttonStyle="danger"
             size="small"
@@ -98,7 +82,6 @@ const plusProductCount = (id: string | number, count: number) => {
   margin: 0 0 $offset-base;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
-  height: 190px;
 
   &:last-child {
     margin: 0;
@@ -113,6 +96,11 @@ const plusProductCount = (id: string | number, count: number) => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: $mobile) {
+    min-width: 120px;
+    width: 120px;
+  }
 
   &:hover {
     img {
@@ -134,18 +122,30 @@ const plusProductCount = (id: string | number, count: number) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  @media (max-width: $mobile) {
+    padding: $offset-base $offset-base 0;
+  }
 }
 
 .product-cart-common-top {
   display: flex;
   justify-content: space-between;
   margin: 0 0 $offset-base;
+
+  @media (max-width: $mobile) {
+    flex-direction: column;
+  }
 }
 
 .product-cart-common-bottom {
   flex: 1;
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: $mobile) {
+    flex-direction: column;
+  }
 }
 
 .product-cart-btns {
@@ -160,8 +160,12 @@ const plusProductCount = (id: string | number, count: number) => {
 }
 
 .product-cart-caption {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
+
+  @media (max-width: $mobile) {
+    font-weight: 400;
+  }
 
   &:hover {
     color: $primary;

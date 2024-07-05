@@ -5,9 +5,9 @@
       v-for="item in brandsList.data"
       :key="item.id"
     >
-      <a
+      <NuxtLink
         class="brand-item__wrap"
-        href="#"
+        :to="{path: `/brands/${item.id}`}"
       >
         <img
           v-if="item.images[0]"
@@ -18,7 +18,7 @@
           key="item.id"
         >
         <span v-else>{{ item.title }}</span>
-      </a>
+      </NuxtLink>
     </div>
   </section>
 </template>
@@ -47,41 +47,37 @@ await getBrandsList(props.maxView);
   lang="scss"
 >
 .brands {
-  display: flex;
+  display: grid;
   flex-wrap: wrap;
   padding: $offset-xlarge 0 $offset-large-2;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 
   @media (max-width: $laptop) {
-    margin: 0 -8px;
-    padding: $offset-small 0;
+    padding: $offset-base 0;
+  }
+
+  @media (max-width: $mobile) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 }
 
 .brand-item {
   margin: 0;
-  width: 25%;
   height: 150px;
   display: flex;
   align-items: center;
   transition: box-shadow 0.25s ease-in-out;
   border-radius: 8px;
   overflow: hidden;
-  padding: 8px;
-
-  @media (max-width: $laptop) {
-    width: 33%;
-  }
-
-  @media (max-width: $small) {
-    width: 50%;
-  }
+  border: 1px solid #e5e5e5;
 
   &:hover {
     box-shadow: $shadows;
   }
 
   &__wrap {
-    border: 1px solid #e5e5e5;
     width: 100%;
     height: 100%;
     display: flex;

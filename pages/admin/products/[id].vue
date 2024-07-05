@@ -12,7 +12,6 @@
             v-model:value="productItem.article"
             name="article"
             required
-            :disabled="true"
           />
           <TextInput
             placeholder="Наименование"
@@ -55,7 +54,7 @@
               <label class="label">Бренд:</label>
               <v-select
                 v-model="productItem.brand"
-                :items="brandList"
+                :items="brandsList.data"
                 item-text="title"
                 item-value="id"
               ></v-select>
@@ -134,14 +133,11 @@ const productImage = ref()
 const productItem = ref()
 
 const categoryList = ref()
-const brandList = ref()
 
-const { categoryListGetter } = storeToRefs(categoryStore)
+const { getBrandsList } = useBrandsStore();
+const { brandsList } = storeToRefs(useBrandsStore());
 
 // Данные по брендам
-const brandsStore = useBrandsStore()
-const { getBrandsList } = brandsStore
-const { brandsListListGetter } = storeToRefs(brandsStore)
 const alertShow = ref(false)
 
 productItem.value = await getItemProduct(pageId.value, route.query.categoryId)
@@ -150,13 +146,12 @@ const charList = ref(productItem.value.characteristics ? productItem.value.chara
 
 onMounted(async () => {
   const categoryResponse = await getCategoryList(1000)
-  // categoryList.value = categoryResponse.data
+
   categoryList.value = categoryResponse.data.map((item) => {
     return { title: item.title, id: item.id }
   })
 
-  const brandResponse = await getBrandsList()
-  brandList.value = brandResponse.data
+  await getBrandsList()
 })
 
 watch(() => {

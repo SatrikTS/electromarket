@@ -2,9 +2,7 @@
   <div>
     <div class="personal-menu">
       <NuxtLink to="/cart">Моя корзина</NuxtLink>
-      <br>
       <NuxtLink to="/personal">Мои заказы</NuxtLink>
-      <NuxtLink to="/personal/favorites">Избранное</NuxtLink>
       <NuxtLink to="/personal/settings">Мои данные</NuxtLink>
     </div>
   </div>

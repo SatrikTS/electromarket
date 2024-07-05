@@ -22,6 +22,11 @@
 .phones {
   display: flex;
   flex-direction: column;
+
+  @media (max-width: $mobile) {
+    align-items: center;
+  }
+
 }
 
 .phone-item {

@@ -62,7 +62,7 @@
               <label class="label">Бренд:</label>
               <v-select
                 v-model="brandValue"
-                :items="brandList"
+                :items="brandsList.data"
                 :rules="requiredRules"
                 return-object
               />
@@ -124,17 +124,14 @@ definePageMeta({
 })
 
 const route = useRoute()
-const pageId = computed(() => route.params.id)
 const categoryStore = useCategoryStore()
 const { getCategoryList } = categoryStore
 const catalogStore = useCatalogStore()
 const imagesStore = useImagesStore()
-const brandsStore = useBrandsStore()
-const { getBrandsList } = brandsStore
 const { postProductItem } = catalogStore
-const { productItemGetter, categoryGetter } = storeToRefs(catalogStore)
-const { categoryListGetter } = storeToRefs(categoryStore)
-const { brandsListListGetter } = storeToRefs(brandsStore)
+const { productItemGetter } = storeToRefs(catalogStore)
+const { getBrandsList } = useBrandsStore();
+const { brandsList } = storeToRefs(useBrandsStore());
 const { postImages } = imagesStore
 
 const categoryValue = ref(null)
@@ -144,7 +141,6 @@ const productImage = ref()
 const alertShow = ref(false)
 const form = ref()
 const categoryList = ref()
-const brandList = ref()
 
 const newProductData = ref({
   name: '',
@@ -157,16 +153,10 @@ onMounted(async () => {
     return { title: item.title, id: item.id }
   })
 
-  const brandResponse = await getBrandsList()
-  brandList.value = brandResponse.data
+  await getBrandsList()
 })
 
-const charList = ref(productItemGetter.value.char ? productItemGetter.value.char : '')
-
-function savedList(list) {
-  charList.value = list
-  newProductData.value.char = charList.value
-}
+// const charList = ref(productItemGetter.value.char ? productItemGetter.value.char : '')
 
 /**
  * Сохранение нового товара
@@ -219,9 +209,6 @@ function uploadImage(value) {
   productImage.value = value
 }
 
-function getSelectData(param) {
-
-}
 </script>
 <style
   scoped

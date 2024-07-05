@@ -20,6 +20,7 @@
         :rules="emailRules"
         outlined
       />
+      {{ personalData.phone }}
       <v-text-field
         v-model="personalData.phone"
         label="Ваш телефон"

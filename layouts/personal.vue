@@ -1,23 +1,11 @@
 <template>
   <div class="personal-page">
-    <header class="personal-page__header">
-      <div class="container">
-        <div class="personal-page__wrapper">
-          <Logo />
-          <div
-            class="personal-page__header-section"
-          >
-            <Profile />
-            <HeaderCart />
-          </div>
-        </div>
-      </div>
-    </header>
+    <Header :isService="true"/>
     <main class="container">
       <div class="personal-page__content">
         <div class="personal-page__column">
           <h3>Мой кабинет</h3>
-          <v-btn @click="logOut">Выход из личного кабинета</v-btn>
+          <v-btn @click="logOut">Выход</v-btn>
           <PersonalMenu />
         </div>
         <slot />
@@ -61,6 +49,11 @@ const logOut = () => {
     align-items: flex-start;
     grid-template-columns: 30% calc(70% - 16px);
     gap: 16px;
+
+    @media (max-width: $mobile) {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   &__column {
@@ -68,11 +61,10 @@ const logOut = () => {
     background: $bg-base;
     border-radius: 8px;
     padding: $offset-large $offset-large $offset-small;
-  }
 
-  &__header {
-    width: 100%;
-    background: #f2f3f5;
+    @media (max-width: $mobile) {
+      width: 100%;
+    }
   }
 
   &__footer {
@@ -85,15 +77,14 @@ const logOut = () => {
     align-items: center;
     justify-content: space-between;
     padding: 16px 0;
-  }
 
-  &__header-section {
-    display: flex;
-    align-items: flex-start;
+    @media (max-width: $mobile) {
+      flex-direction: column;
+    }
   }
 
   main {
-    padding: 16px 0;
+    padding: 16px;
   }
 }
 </style>

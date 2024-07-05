@@ -110,9 +110,13 @@ const showRemoveModal = (param) => {
 const getOrderForm = async (): Promise<void> => {
   const userToken = useCookie('userToken');
   if (userToken.value) {
-    await navigateTo('/ordering');
+    await navigateTo('/ordering', {
+      external: true
+    });
   } else {
-    await navigateTo('/checkout');
+    await navigateTo('/auth/',{
+      external: true
+    });
   }
 };
 
@@ -165,6 +169,11 @@ watch(
   align-items: flex-start;
   grid-template-columns: calc(62% - 16px) 38%;
   gap: 16px;
+
+  @media (max-width: $mobile) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
 }
 
 .final-content {
@@ -179,6 +188,10 @@ watch(
   background: #f3f3f3;
   border-radius: 8px;
   padding: 24px;
+
+  @media (max-width: $mobile) {
+    width: 100%;
+  }
 }
 
 .final-list {

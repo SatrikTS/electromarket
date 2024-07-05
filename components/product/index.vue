@@ -1,7 +1,6 @@
 <template>
   <div
     class="product"
-    :class="{'is-loading' : isLoading}"
   >
     <div class="product__wrap">
       <NuxtLink
@@ -10,10 +9,28 @@
       >
         <div class="product__pic">
           <v-img
+            v-if="data.images[0]"
             cover
             :src="MAIN_URL+ data.images[0].img"
             :alt="data.title"
           />
+          <v-img
+            v-else
+            class="mx-auto"
+            height="300"
+            lazy-src="@/assets/img/loader.webp"
+            max-width="500"
+            src="https://bad.src/not/valid"
+          >
+            <template v-slot:placeholder>
+              <div class="d-flex align-center justify-center fill-height">
+                <v-progress-circular
+                  color="grey-lighten-4"
+                  indeterminate
+                ></v-progress-circular>
+              </div>
+            </template>
+          </v-img>
         </div>
         <span
           class="product__title"
@@ -30,7 +47,8 @@
         class="product__balance"
         :class="balanceStyled"
       >
-        В наличии: {{ data.balance }}
+        <span v-if="data.balance > 0">В наличии</span>
+        <span v-else class="product__balance-empty">Под заказ</span>
       </span>
         <span class="product__price">{{ data.price }} ₽</span>
       </div>
@@ -85,16 +103,16 @@ const MAIN_URL = useRuntimeConfig().public.MAIN_URL;
 const compareReady = ref(false)
 
 const balanceStyled = computed(() => {
-
-  if (!parseInt(props.data.balance)) {
-    return 'empty';
-  }
-
-  if (props.data.balance > 3) {
-    return 'success';
-  } else {
-    return 'warning';
-  }
+  //
+  // if (!parseInt(props.data.balance)) {
+  //   return 'empty';
+  // }
+  //
+  // if (props.data.balance > 3) {
+  //   return 'success';
+  // } else {
+  //   return 'warning';
+  // }
 
 });
 </script>
@@ -105,21 +123,14 @@ const balanceStyled = computed(() => {
 .product {
   position: relative;
 
-  @media (max-width: $laptop) {
-    width: 33%;
-    min-width: auto;
-  }
-
-  @media (max-width: $mobile) {
-    width: 50%;
-    flex: 1;
-    min-width: 190px;
-  }
-
   &:hover {
     .product__btns {
       opacity: 1;
       z-index: 1;
+    }
+
+    .product__title {
+
     }
   }
 
@@ -131,7 +142,7 @@ const balanceStyled = computed(() => {
   }
 
   &__wrap {
-    border: 1px solid $bg-gold;
+    border: 1px solid #e5e5e5;
     padding: $offset-small;
     display: flex;
     flex-direction: column;
@@ -163,6 +174,10 @@ const balanceStyled = computed(() => {
     height: 40px;
     display: inline-block;
     overflow: hidden;
+
+    &:hover {
+      color: $primary
+    }
   }
 
   &__description {
@@ -174,6 +189,10 @@ const balanceStyled = computed(() => {
     height: 40px;
     display: inline-block;
     overflow: hidden;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
 
   &__price {
@@ -181,12 +200,21 @@ const balanceStyled = computed(() => {
     margin: 8px 0;
     font-weight: bold;
     color: $primary;
+
+    @media (max-width: $mobile) {
+      margin: 4px 0;
+    }
   }
 
   &__pic {
     height: 200px;
     overflow: hidden;
     margin: 0 0 $offset-small;
+
+    @media (max-width: $mobile) {
+      height: 180px;
+      display: flex;
+    }
 
     &:hover {
       img {
@@ -236,7 +264,7 @@ const balanceStyled = computed(() => {
       color: $text;
     }
 
-    &.empty {
+    &-empty {
       color: $primary;
     }
   }
@@ -245,6 +273,11 @@ const balanceStyled = computed(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media (max-width: $mobile) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 }
 </style>

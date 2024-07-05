@@ -3,8 +3,8 @@
     <NuxtLink to='/'>Главная</NuxtLink> <span>/</span>
     <NuxtLink to="/categories" @click="getCategoryList(null, 0)">Категории</NuxtLink> <span>/</span>
     <span v-if='!catalogLink && catalogName'> {{ catalogName }}</span>
-    <NuxtLink  v-if='catalogLink && catalogName' :to='{ path: `/catalog`, query: {param: catalogLink}  }'>{{ catalogName }}</NuxtLink><span v-if='catalogLink'>/</span>
-    <span v-if='productName' class='breadcrumbs-last'>{{ productName}}</span>
+    <NuxtLink  v-if='catalogLink' :to='{ path: `/products`, query: {categories: catalogLink}  }'>{{ catalogLink }}</NuxtLink><span v-if='catalogLink'>/</span>
+    <span v-if='productName' class='breadcrumbs__last'>{{ productName}}</span>
   </div>
 </template>
 <script setup>
@@ -25,8 +25,22 @@ const props = defineProps({
   align-items: center;
   font-size: 14px;
 
+  @media (max-width: $mobile) {
+    flex-wrap: wrap;
+    letter-spacing: -0.4px;
+    font-size: 12px;
+  }
+
   span {
     padding: 0 5px;
+  }
+
+  .breadcrumbs__last {
+    color: $primary;
+
+    @media (max-width: $mobile) {
+      padding-left: 0;
+    }
   }
 
   a {
@@ -34,9 +48,5 @@ const props = defineProps({
       color: $primary;
     }
   }
-}
-
-.breadcrumbs-last {
-  color: $primary;
 }
 </style>

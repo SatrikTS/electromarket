@@ -14,11 +14,16 @@ export const useCategoryStore = defineStore({
     };
   },
   actions: {
-    async getCategoryList(maxViews: number | null, parentCategory?: number) {
+    async getCategoryList(maxViews: number | null, parentCategory?: number, title?: undefined) {
       let urlParam = maxViews ? `limit=${maxViews}` : '';
       if (parentCategory !== undefined) {
         urlParam += `${urlParam ? '&' : ''}parent=${parentCategory}`;
       }
+
+      if(title !== undefined) {
+        urlParam += `${urlParam ? '&' : ''}partial_title=${title}`;
+      }
+
       const url = `${useRuntimeConfig().public.SERVER_URL}/categories?${urlParam}`;
 
       return fetch(url)

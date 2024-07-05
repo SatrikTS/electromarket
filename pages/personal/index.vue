@@ -1,42 +1,40 @@
 <template>
-  <div class="personal-data">
-    zakazi
+  <div class="personal">
+    <h3 class="personal__title">Мои заказы</h3>
+    <OrderedList
+      class="ordered-list"
+      :data="ordersList.data"
+    />
   </div>
 </template>
 <script
   setup
   lang="ts"
 >
-import { useAuthorisationStore } from '~/store/auth-store';
 import { storeToRefs } from 'pinia';
-import { usePersonalStore } from '~/store/personal-store';
-
-const { personalData } = storeToRefs(usePersonalStore());
+import {useOrdersStore} from '~/store/orders-store';
 
 definePageMeta({
   layout: 'personal',
   middleware: 'checkout',
 });
 
-interface Props {
-  data: any;
-}
 
-const props = defineProps<Props>();
-const { logoutUser } = useAuthorisationStore();
+const { ordersList } = storeToRefs(useOrdersStore());
+const { getOrders } = useOrdersStore();
 
-console.log(props, 1);
+await getOrders()
 
-const logOut = () => {
-  logoutUser();
-  location.reload();
-};
 </script>
 <style
   lang="scss"
   scoped
 >
-.personal-data {
+.personal {
   position: relative;
+
+  &__title {
+    margin: 0 0 12px;
+  }
 }
 </style>

@@ -69,6 +69,12 @@
 .contact-block {
   margin: $offset-small 0 $offset-large;
 
+  @media (max-width: $mobile) {
+    margin: 8px 0 8px;
+    border-bottom: 1px dotted #ccc;
+    padding: 0 0 8px;
+  }
+
   &:last-child {
     margin: 0;
   }

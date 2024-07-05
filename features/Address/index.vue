@@ -10,6 +10,5 @@
 .address {
   font-size: 14px;
   line-height: 1.5;
-  max-width: 200px;
 }
 </style>

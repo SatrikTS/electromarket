@@ -9,16 +9,16 @@
   setup
   lang="ts"
 >
-import { usePersonalStore } from '~/store/personal-store';
+// import { usePersonalStore } from '~/store/personal-store';
 
 definePageMeta({
   layout: 'checkout',
   middleware: 'checkout',
 });
 
-const { getPersonalData } = usePersonalStore();
+// const { getPersonalData } = usePersonalStore();
 
-await getPersonalData();
+// await getPersonalData();
 
 const orderComplete = () => {
 

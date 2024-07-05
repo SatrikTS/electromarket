@@ -23,13 +23,15 @@ export const usePersonalStore = defineStore('personalStore', () => {
   const getPersonalData = async (id: number = undefined) => {
     const token = useCookie('userToken');
     const userId = useCookie('userId');
-    const resultId = id ? id : userId.value
-    const { data } = await $api.get(`/personal/${resultId}`, {
-      headers: {
-        Authorization: 'Bearer ' + token.value,
-      },
-    });
-    personalData.value = data.data
+    // if(token.value) {
+      const data = await $api.get(`/personal/${userId.value}`, {
+        headers: {
+          Authorization: 'Bearer ' + token.value,
+        },
+      });
+
+      personalData.value = data.data.data;
+    // }
   };
 
 

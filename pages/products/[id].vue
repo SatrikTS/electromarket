@@ -1,11 +1,16 @@
 <template>
-  <div class='product-inner'>
-    <b>Артикл: {{ productItem.article }}</b>
-    <br>
-    <b>Баланс: {{ productItem.balance }}</b>
-    <div class='product-inner__wrap'>
-      <div class='product-inner__row'>
-        <div v-if='productItem.images' class="product-inner__img">
+  <div class="product-inner">
+    <Breadcrumbs
+      :catalogName="route.query.categories"
+      :catalogLink="productItem?.category.title"
+      :productName="productItem.title"
+    />
+    <div class="product-inner__wrap">
+      <div
+        v-if="productItem.images.length"
+        class="product-inner__row"
+      >
+        <div class="product-inner__img">
           <div class="product-inner__img-active">
             <img
               v-if="activeImage"
@@ -18,7 +23,7 @@
             <div
               v-for="image in productItem.images"
               :key="image.id"
-              class='product-inner__thumbnail-item'
+              class="product-inner__thumbnail-item"
               :class='activeImage?.id === image.id ? "active" : ""'
             >
               <img
@@ -30,67 +35,60 @@
           </div>
         </div>
       </div>
-      <div class='product-inner__row'>
-        <Breadcrumbs
-          :catalogName='route.query.categories'
-          :catalogLink='route.query.categories'
-          :productName='productItemGetter.title'
-        />
-        <h2 class='product-inner__title'>{{ productItem.title }}</h2>
-        <div class='product-inner__price'>
-          <span class='product-inner__price-label'>Цена: </span>
-          <span class='product-inner__price-count'>{{ productItem.price }} ₽</span>
+      <div class="product-inner__row">
+        <h2 class="product-inner__title">{{ productItem.title }}</h2>
+        <span>
+           Артикул: {{ productItem.article }}
+          </span>
+        <div class="product-inner__price">
+          <span class="product-inner__price-label">Цена: </span>
+          <span class="product-inner__price-count">{{ productItem.price }} ₽</span>
         </div>
-        <div class='product-inner__product-buttons'>
-          <Button
-            type='button'
-            buttonStyle='success'
+        <div class="product-inner__price">
+          <span v-if="parseInt(productItem.balance) > 0" class="product-inner__price-label in-stock">В наличии</span>
+          <span v-else class="product-inner__price-label to-order">Под заказ</span>
+        </div>
+        <div class="product-inner__product-buttons">
+          <v-btn
+            type="button"
+            color="#27ae60"
             @click="addToCartStore(productItem.price, productItem)"
           >Добавить в корзину
-          </Button>
-          <Button
-            type='button'
-            buttonStyle='warning'
-            disabled
-          >Добавить в избранное
-          </Button>
+          </v-btn>
         </div>
-        <div class='product-inner__description'>
+        <div class="product-inner__description">
           {{ productItem.description }}
         </div>
         <div
-          class='product-inner__features'
-          v-if='productItem.characteristics'
+          class="product-inner__features"
+          v-if="productItem.characteristics.length"
         >
-          <span class='product-inner__char-caption'>Характеристики:</span>
+          <span class="product-inner__char-caption">Характеристики:</span>
           <div
-            class='product-inner__features-item'
-            v-for='(item, index) in productItem.characteristics'
+            class="product-inner__features-item"
+            v-for="(item, index) in productItem.characteristics"
             :key="index"
           >
-            <span class='product-inner__features-key'>{{ item.key }}:</span>
-            <span class='product-inner__features-dots'></span>
-            <span class='product-inner__features-value'>{{ item.value }}</span>
+            <span class="product-inner__features-key">{{ item.key }}:</span>
+            <span class="product-inner__features-dots"></span>
+            <span class="product-inner__features-value">{{ item.value }}</span>
           </div>
         </div>
       </div>
-      <div class='product-inner__row product-inner__row--full'>
-        <div class='product-inner__info'>
+      <div class="product-inner__row product-inner__row--full">
+        <div class="product-inner__info">
           {{ productItem.info }}
         </div>
-        <Caption caption='Рекомендуем' />
-
+        <Caption caption="Рекомендуем" />
         <ProductsList
-          v-if='productItem.category'
-          :maxView='4'
-          :catalogCategory='productItem.category.title'
+          class="product-list"
+          :productList="productList.data"
         />
         <NuxtLink
-          :to='{ path: `/catalog`, query: {param: route.query.param}  }'
-          class='product-inner__link'
+          :to="{ path: `/products`, query: {categories: productItem?.category.title}  }"
+          class="product-inner__link"
         >
           Посмотреть другие товары этой категории:
-          {{ route.query.param }}
           <IconArrow />
         </NuxtLink>
       </div>
@@ -98,32 +96,36 @@
   </div>
 </template>
 <script setup>
-import {getCookie} from "../../utils/cookie"
+import { getCookie } from '../../utils/cookie'
 
 definePageMeta({
-  layout: "pages",
+  layout: 'pages',
 })
 
-import IconArrow from "../../assets/icons/IconArrow.vue"
-import {onMounted, ref, computed, watch} from "vue"
-import {storeToRefs} from "pinia"
+import IconArrow from '../../assets/icons/IconArrow.vue'
+import { onMounted, ref, computed, watch, reactive } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useProductsStore } from '~/store/products-store';
 
-import {useCatalogStore} from "~/store/products-list"
-import {useCartStore} from "~/store/cart"
+import { useCatalogStore } from '~/store/products-list'
+import { useCartStore } from '~/store/cart'
+
+useHead({
+  link: [{ rel: 'canonical'}],
+})
 
 const catalogStore = useCatalogStore()
 const { getItemProduct } = catalogStore
 const { productItemGetter } = storeToRefs(catalogStore)
 const cartStore = useCartStore()
-
+const { getProducts } = useProductsStore();
 const route = useRoute()
 const pageId = computed(() => route.params.id)
 const inputVal = ref(cartStore.cartGetter)
 const { addToCart } = cartStore
 const MAIN_URL = useRuntimeConfig().public.MAIN_URL
-
-
 const productItem = ref()
+const { productList } = storeToRefs(useProductsStore());
 
 function addToCartStore(price, product) {
   inputVal.value++
@@ -134,7 +136,7 @@ function addToCartStore(price, product) {
     price: product.price,
     images: product.images,
     id: product.id,
-    category: product.category
+    category: product?.category,
   }
 
   addToCart(inputVal.value, price, cartProduct)
@@ -145,17 +147,25 @@ function showImage(image) {
 }
 
 productItem.value = await getItemProduct(pageId.value, route.query.categoryId)
-const activeImage = ref(productItem.value.images[0])
+const activeImage = ref(productItem.value?.images ? productItem.value.images[0] : null)
+
+const similarProductsFilters = reactive({
+  page: 1,
+  limit: 4,
+  categories: productItem.value?.category.title,
+})
+
+await getProducts(similarProductsFilters);
+
 onMounted(() => {
 
-
-  inputVal.value = getCookie("cartCount") ? getCookie("cartCount") : inputVal.value
+  inputVal.value = getCookie('cartCount') ? getCookie('cartCount') : inputVal.value
 })
 
 watch(
   () => cartStore.cartGetter,
   (newValue) => {
-    inputVal.value = getCookie("cartCount")
+    inputVal.value = getCookie('cartCount')
   },
 )
 
@@ -170,16 +180,22 @@ watch(
 </script>
 <style
   scoped
-  lang='scss'
+  lang="scss"
 >
 .product-inner {
-  padding: $offset-large-2 0;
+  padding: $offset-large-2 0 0;
+
+  @media (max-width: $mobile) {
+    padding: 0;
+  }
 
   &__wrap {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr;
 
     @media (max-width: $mobile) {
+      display: flex;
       flex-direction: column;
     }
   }
@@ -188,18 +204,7 @@ watch(
     min-width: 50%;
     flex: 1;
 
-    &--full {
-      width: 100%;
-      max-width: 100%;
-
-      @media (max-width: $mobile) {
-        padding: 0;
-        order: 2;
-      }
-    }
-
     &:first-child {
-      padding-right: $offset-large;
 
       @media (max-width: $mobile) {
         padding: 0;
@@ -208,11 +213,22 @@ watch(
     }
 
     &:nth-child(2n) {
-      padding-left: $offset-large;
 
       @media (max-width: $mobile) {
         padding: 0;
         order: 0;
+      }
+    }
+
+    &--full {
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+      grid-column: 1 / span 2;
+
+      @media (max-width: $mobile) {
+        padding: 0;
+        order: 2;
       }
     }
   }
@@ -226,6 +242,14 @@ watch(
 
   &__price-label {
     margin-right: $offset-small;
+
+    &.in-stock {
+      color: $success;
+    }
+
+    &.to-order {
+      color: $primary;
+    }
   }
 
   &__price-count {
@@ -300,7 +324,8 @@ watch(
 
   &__info {
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 2;
+    letter-spacing: 2px;
     margin: $offset-small 0;
   }
 
@@ -370,6 +395,14 @@ watch(
     &.active img {
       border: 1px solid rgba($success, 0.5);
     }
+  }
+}
+
+.product-list {
+  padding: 32px 0;
+
+  @media (max-width: $mobile) {
+    padding: 16px 0;
   }
 }
 </style>

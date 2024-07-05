@@ -6,11 +6,22 @@ export default defineNuxtConfig({
   ssr: true,
   app: {
     head: {
-      title: 'Инструменты Крым',
+      title: 'Электроинструмент и Крепеж, Крым, Севастополь',
+      link: [{ rel: 'icon', type: 'image/x-icon', href: 'https://instrumentsev.ru/favicon.ico' }],
+      script: [
+        {src: 'https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js'},
+        {src: 'https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js'},
+        {src: 'https://unpkg.com/@vkid/sdk@latest/dist-sdk/umd/index.js'},
+        {src: '//code.jivo.ru/widget/u38ujghobp'}
+      ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Продажа электроинструмента в Крыму и Севастополе. Продаем инструмент также в Симферополе, Ялте и других городах Крыма' }
+        { name: 'keywords', content: 'Электроинструмент, дрели, болгарки, ушм, шуруповерты, лобзики, Севастополь, Крым, Симферополь' },
+        { name: 'description', content: 'Продажа электроинструмента в Крыму и Севастополе. Продаем инструмент и крепеж в Симферополе, Севастополе, Ялте и других городах' }
       ],
+      htmlAttrs: {
+        lang: 'ru'
+      }
     }
   },
   runtimeConfig: {
@@ -31,6 +42,7 @@ export default defineNuxtConfig({
   },
   transpile: [/@vue[\\/]composition-api/],
   modules: [
+    '@nuxtjs/google-fonts',
     '@pinia/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -56,7 +68,7 @@ export default defineNuxtConfig({
   googleFonts: {
     download: true,
     families: {
-      Roboto: [400, 500, 600, 700],
+      Truculenta: [400, 500, 600, 700],
     },
   },
   vite: {

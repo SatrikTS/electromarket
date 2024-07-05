@@ -34,7 +34,7 @@ function addToCartStore(price, item) {
     price: item.price,
     images: item.images,
     id: item.id,
-    category: item.category
+    category: item?.category
   }
 
   inputVal.value++;
@@ -60,5 +60,10 @@ watch(
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+
+  @media (max-width: $mobile) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }
 </style>

@@ -75,6 +75,14 @@
         <div class="product-item-category">Категория</div>
         <div class="product-item-brand">Бренд</div>
         <div class="product-item-price">Цена</div>
+        <div class="product-item-percent">
+          <v-select
+            v-model="pricePercent"
+            :items="['-15', '-10', '-5', '0', '5', '10', '15']"
+            label="%"
+            @input="handlePercentPrice"
+          />
+        </div>
         <div class="product-item-price">Остаток</div>
         <div class="product-item-price">
         </div>
@@ -87,9 +95,10 @@
         <div class="product-item-id">{{ item.id }}</div>
         <div class="product-item-article">{{ item.article }}</div>
         <div class="product-item-name">{{ item.title }}</div>
-        <div class="product-item-category">{{ item.category?.title }}</div>
+        <div class="product-item-category">{{ item?.category?.title }}</div>
         <div class="product-item-brand">{{ item.brand?.title }}</div>
         <div class="product-item-price">{{ item.price }} ₽.</div>
+        <div class="product-item-percent">{{(pricePercent === 0) ? item.price : (parseInt(item.price) + (parseInt(item.price) * pricePercent / 100))}} ₽.</div>
         <div class="product-item-price">{{ parseInt(item.balance) }} шт.</div>
         <div class="product-item-price product-item-price--buttons">
           <Button
@@ -185,6 +194,7 @@ const articleSearch = ref()
 const titleSearch = ref()
 const categoryList = ref()
 const brandList = ref()
+const pricePercent = ref()
 
 getProductList()
 await getBrandsList()
@@ -307,6 +317,10 @@ function clearFilters() {
   getProductList(productQueryGetter.value)
 }
 
+function handlePercentPrice() {
+
+}
+
 watch(categoryValue, () => {
   selectCategory()
 })
@@ -381,6 +395,10 @@ watch(brandValue, () => {
       margin: 0 10px;
     }
   }
+}
+
+.product-item-percent {
+  width: 150px;
 }
 
 .product-item-name {

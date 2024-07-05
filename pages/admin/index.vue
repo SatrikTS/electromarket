@@ -37,6 +37,17 @@
         @handleUpdate="handleBalances"
       />
     </div>
+    <v-progress-circular
+      v-if="loadingStatus"
+      class="loader"
+      :model-value="loadingStatus"
+      :rotate="360"
+      :size="100"
+      :width="15"
+      color="teal"
+    >
+      {{ loadingStatus }}
+    </v-progress-circular>
   </div>
   <Alert
     class="alert"
@@ -74,21 +85,34 @@ const {updateBalance, updatePrices} = productsUpdateStore
 const alertShowPrice = ref(false)
 const alertShowBalance = ref(false)
 const loader = ref(null)
-const loading = ref(false)
+const loadingStatus = ref(null)
 const alertError = ref(false)
 const files = ref([])
+const interval = ref()
 
 const handlePrices = async (file) => {
   const dataForm = new FormData()
   dataForm.append('file_price', file)
+  showLoader()
   const response = await updatePrices(dataForm)
+  clearInterval(interval.value)
   if(response.result) {
     alertShowPrice.value = true
     setTimeout(() => {
       alertShowPrice.value = false
+      loadingStatus.value = null
       location.reload()
     }, 2000)
   }
+}
+
+const showLoader = () => {
+  interval.value = setInterval(() => {
+    if (loadingStatus.value === 100) {
+      return (loadingStatus.value = 0)
+    }
+    loadingStatus.value += 10
+  }, 1200)
 }
 
 const handleBalances = async (file) => {
@@ -96,11 +120,14 @@ const handleBalances = async (file) => {
   dataForm.append('file_balance', file)
 
   try {
+    showLoader()
     const response = await updateBalance(dataForm)
+    clearInterval(interval.value)
     if(response.result) {
       alertShowBalance.value = true
       setTimeout(() => {
         alertShowBalance.value = false
+        loadingStatus.value = null
         location.reload()
       }, 2000)
     }
@@ -136,5 +163,13 @@ const handleBalances = async (file) => {
 
 .v-file-input {
   max-width: 300px;
+}
+
+.loader {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  margin-left: -75px;
 }
 </style>

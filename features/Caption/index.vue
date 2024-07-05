@@ -19,6 +19,8 @@ const props = defineProps({
 
   h2 {
     margin: 0;
+    //font-family: "DM Sans", sans-serif;
+    font-family: "Truculenta", sans-serif;
   }
 }
 </style>

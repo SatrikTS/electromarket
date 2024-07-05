@@ -11,9 +11,15 @@
         <h4 class="admin-column__caption">Меню админ-панели</h4>
         <div class="admin-menu">
           <NuxtLink to="/admin">Главная</NuxtLink>
+          <NuxtLink to="/admin/orders">Заказы</NuxtLink>
           <NuxtLink to="/admin/products">Товары</NuxtLink>
           <NuxtLink to="/admin/category">Категории</NuxtLink>
           <NuxtLink to="/admin/brands">Бренды</NuxtLink>
+          <NuxtLink to="/admin/delivery">Доставка</NuxtLink>
+          <NuxtLink to="/admin/pays">Типы оплаты</NuxtLink>
+          <NuxtLink to="/admin/articles">Статьи</NuxtLink>
+          <NuxtLink to="/admin/topics">Темы постов</NuxtLink>
+          <NuxtLink to="/admin/about">О компании</NuxtLink>
         </div>
         <div class="admin-service">
           <Button @click="logOut">Выход из админ-панели</Button>

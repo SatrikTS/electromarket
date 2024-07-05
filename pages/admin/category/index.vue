@@ -9,6 +9,20 @@
     </Button>
     </div>
   </div>
+  <ul class="special-list">
+    <li>Поиск по названию -
+      <small>минимум 2 символа из общего названия</small>
+    </li>
+  </ul>
+  <div class="column-3 product-filters__row">
+    <v-text-field
+      v-model="titleSearch"
+      label="Поиск по названию"
+      minlength="3"
+      required
+      @input="handleSearchByTitle"
+    />
+  </div>
   <div class="category-list">
     <div class='category-list__header'>
       <div class='category-list__item'>
@@ -98,11 +112,10 @@ definePageMeta({
 import {ref} from 'vue'
 import IconEdit from '@/assets/icons/IconEdit.vue'
 import IconRemove from '@/assets/icons/IconDelete.vue'
-import {storeToRefs} from 'pinia'
 import {useCategoryStore} from '../../../store/category'
+import debounce from '~/utils/debounce'
 
 const categoryStore = useCategoryStore()
-const {categoryListGetter} = storeToRefs(categoryStore)
 const {getCategoryList, removeCategory} = categoryStore
 
 const isShowModal = ref(false)
@@ -110,6 +123,7 @@ const removeCategoryId = ref()
 const alertErrorText = ref()
 const alertWarningText = ref()
 const categoryList = ref()
+const titleSearch = ref()
 
 const responseCategory = await getCategoryList(1000)
 categoryList.value = responseCategory.data
@@ -130,6 +144,19 @@ function editCategory(id: number) {
 function confirmRemoveModal(id: number) {
   isShowModal.value = true
   removeCategoryId.value = id
+}
+
+/**
+ * поиск товара по части названия
+ */
+function handleSearchByTitle() {
+  if (titleSearch.value.length > 1 || titleSearch.value.length === 0) {
+    debounce(async () => {
+      const searchList = await getCategoryList(null, undefined, titleSearch.value)
+
+      categoryList.value = searchList.data
+    }, 1000)
+  }
 }
 
 /**

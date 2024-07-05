@@ -18,6 +18,7 @@
           <Category
             :categoryList="categoryList"
             :columns="2"
+            @navigate="handleNavigate"
           />
           <v-btn
             depressed
@@ -41,6 +42,14 @@
           alt="Севастополь электроинструмент авито"
         >
       </NuxtLink>
+    </div>
+    <Caption caption="Популярные" />
+    <div class="container">
+      <div class="main-recommendation">
+        <ProductsList
+          :productList="productListPopular.data"
+        />
+      </div>
     </div>
     <Caption caption="Рекомендуем" />
     <div class="container">
@@ -67,18 +76,30 @@
 import { storeToRefs } from 'pinia';
 import { useCategoryStore } from '@/store/category';
 import { useProductsStore } from '~/store/products-store';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
-const { getProducts } = useProductsStore();
-const { productList } = storeToRefs(useProductsStore());
+const { getProducts, getProductsPopular } = useProductsStore();
+const { productList, productListPopular } = storeToRefs(useProductsStore());
 const categoryStore = useCategoryStore();
 const { getCategoryList } = categoryStore;
 const categoryList = ref();
+const popularProductsFilters = reactive({
+  page: 1,
+  limit: 8,
+  categories: 'УШМ',
+});
 
 await getProducts({ limit: 4 });
+await getProductsPopular(popularProductsFilters);
 const response = await getCategoryList(6, 0);
 
 categoryList.value = response.data;
+
+const handleNavigate = async (param) => {
+  await navigateTo(`${location.origin}/categories/subcategories?parent=${param}`, {
+    external: true,
+  });
+};
 </script>
 <style
   scoped
@@ -191,6 +212,10 @@ categoryList.value = response.data;
 
 .main-recommendation {
   padding: $offset-large-2 0;
+
+  @media (max-width: $mobile) {
+    padding: $offset-base 0;
+  }
 }
 
 .avito-banner {

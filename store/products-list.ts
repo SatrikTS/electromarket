@@ -33,7 +33,6 @@ export const useCatalogStore = defineStore({
      * @param param
      */
     getProductList(param: any) {
-      console.log(param);
       const urlParam = param ? `${queryString.stringify(param, {arrayFormat: 'comma'})}`
         : `${queryString.stringify(this.productQuery, {arrayFormat: 'bracket'})}`
       const url = `${useRuntimeConfig().public.SERVER_URL}/products?${urlParam}`
@@ -146,9 +145,10 @@ export const useCatalogStore = defineStore({
   getters: {
     productListGetter: state => state.productList,
     productItemGetter: state => state.productItem,
-    categoryGetter: state => state.category,
+    categoryGetter: state => state?.category,
     activeCategoryGetter: state => state.activeCategory,
     productQueryGetter: state => state.productQuery,
     productsTotalGetter: state => state.productsTotal,
+    searchLoadingGetter: state => state.searchLoading,
   },
 })

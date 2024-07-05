@@ -8,8 +8,8 @@ export const menuList = [
     text: 'Категории'
   },
   {
-    link: '/promotion',
-    text: 'Акции'
+    link: '/brands',
+    text: 'Бренды'
   },
   {
     link: '/about',
