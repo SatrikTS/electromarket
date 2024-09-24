@@ -7,8 +7,8 @@
       </div>
       <div class='contact-block'>
         <span class='contacts-caption'>Режим работы:</span>
-        <span><b>Пн-Cб:</b> 8:00 - 19:00</span> /
-        <span><b>Вс:</b> 9:00 - 15:00</span>
+        <span><b>Понедельник-Пятница:</b> 9:00 - 17:30</span> /
+        <span><b>Суббота:</b> 9:00 - 15:00</span>
       </div>
       <div class='contact-block'>
         <span class='contacts-caption'>Связаться с нами по всем вопросам:</span>

@@ -29,11 +29,12 @@
         </v-range-slider>
         <span class="filters-label">Производители:</span>
         <div class="filters-group">
+          {{ brandsList }}
           <Checkbox
-            v-for="item in brandsList.data"
-            :key="item.title"
-            :name="item.title"
-            :id="item.title"
+            v-for="item in filters"
+            :key="item"
+            :name="item"
+            :id="item"
             @change="getFiltersByBrand"
           />
         </div>
@@ -53,20 +54,21 @@ import { updateScreenSize } from '../../utils/updateResize';
 import IconFilter from '../../assets/icons/IconFilter.vue';
 
 interface Props {
+  filters: [];
   maxPriceProduct: number;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits(['getFiltersByBrand', 'updatePrice']);
 const priceRange = ref([0, props.maxPriceProduct]);
-const { getBrandsList } = useBrandsStore();
+// const { getBrandsList } = useBrandsStore();
 const brandsNameFiltersList = ref([]);
 const isMobileSize = ref(false);
 const isActiveFilter = ref(false);
 const { brandsList } = storeToRefs(useBrandsStore());
 const overlay = ref()
 
-await getBrandsList();
+// await getBrandsList();
 
 function getFiltersByBrand(e) {
   if (e.target.checked) {

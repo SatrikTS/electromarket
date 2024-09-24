@@ -63,7 +63,6 @@ const prepareUploadData = (event) => {
   if (event.target.files[0]) {
     isPrepareData.value = true;
     fileProperties.value = event.target.files[0];
-    console.log(fileProperties.value);
   }
 };
 

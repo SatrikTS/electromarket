@@ -61,7 +61,7 @@
         </div>
         <div
           class="product-inner__features"
-          v-if="productItem.characteristics.length"
+          v-if="productItem?.characteristics?.length"
         >
           <span class="product-inner__char-caption">Характеристики:</span>
           <div

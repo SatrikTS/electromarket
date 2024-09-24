@@ -1,6 +1,20 @@
 <template>
   <div v-if="modelValue" class="search-result">
     <ul class="list">
+      <div class="list-category">
+        <NuxtLink
+          v-for="category in categoryList"
+          class="list-category-link"
+          :to="{
+            path: `/products`,
+            query: {categories: category.title}}
+          "
+          external
+          >
+          {{ category.title }}
+          <small>Категория</small>
+        </NuxtLink>
+      </div>
       <li v-for="item in productList?.data">
         <NuxtLink
           :to="{path: `/products/${item.id}`}"
@@ -41,6 +55,23 @@ const catalogStore = useCatalogStore()
 const MAIN_URL = useRuntimeConfig().public.MAIN_URL;
 const { productList } = storeToRefs(useProductsStore());
 
+
+const categoryList = computed(() => {
+  const uniqueCategories = new Map();
+
+  productList?.value?.data.forEach((item) => {
+    const category = item.category;
+
+    // Проверяем, есть ли уже объект с таким id в коллекции
+    if (!uniqueCategories.has(category.id)) {
+      uniqueCategories.set(category.id, category);
+    }
+  });
+
+  // Преобразуем Map обратно в массив объектов
+  return Array.from(uniqueCategories.values());
+});
+
 </script>
 <style scoped lang="scss">
 .search-result {
@@ -73,6 +104,19 @@ const { productList } = storeToRefs(useProductsStore());
   &:hover {
     background: #ccc;
   }
+}
+
+.list-category-link {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-category a {
+  display: flex;
+  padding: 16px 16px 8px;
+  background: #f3f3f3;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
 }
 
 .search-result-img {

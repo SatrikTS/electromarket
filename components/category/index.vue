@@ -58,7 +58,7 @@ const columnsStyled = computed(() => {
 });
 
 const handleCategory = async (item) => {
-  console.log(item);
+
   if (item.child == '[]' || !item.child) {
     await navigateTo(`${location.origin}/products?categories=${item.title}`, {
       external: true,

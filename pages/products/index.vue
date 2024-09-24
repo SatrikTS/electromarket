@@ -8,6 +8,7 @@
         <div class="column-5 filters-group">
           <Filters
             :maxPriceProduct="maxListPrice?.price"
+            :filters="productList.brand_filter"
             @getFiltersByBrand="getFiltersByBrand"
             @updatePrice="updateFilterPrice"
           />

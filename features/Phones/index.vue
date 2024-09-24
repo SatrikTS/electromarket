@@ -6,11 +6,11 @@
     >+7 (978) 847-91-88
     </a>
     <a
-      href='tel: +79788479188'
+      href='tel: +79786534490'
       class='phone-item'
-    >+7 (978) 847-91-88
+    >+7(978)653-44-90
     </a>
-    <span class='mark'>Звонки доступны 08:00 – 21:00</span>
+    <span class='mark'>Звонки доступны 09:00 – 19:00</span>
   </div>
 </template>
 <script setup>
