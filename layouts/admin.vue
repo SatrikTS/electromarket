@@ -14,6 +14,7 @@
           <NuxtLink to="/admin/orders">Заказы</NuxtLink>
           <NuxtLink to="/admin/products">Товары</NuxtLink>
           <NuxtLink to="/admin/category">Категории</NuxtLink>
+          <NuxtLink to="/admin/category-sort">Категории - сортировка</NuxtLink>
           <NuxtLink to="/admin/brands">Бренды</NuxtLink>
           <NuxtLink to="/admin/delivery">Доставка</NuxtLink>
           <NuxtLink to="/admin/pays">Типы оплаты</NuxtLink>

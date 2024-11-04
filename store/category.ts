@@ -24,6 +24,10 @@ export const useCategoryStore = defineStore({
         urlParam += `${urlParam ? '&' : ''}partial_title=${title}`;
       }
 
+      // if(sort !== undefined) {
+        urlParam += `${urlParam ? '&' : ''}sort=queue_asc`;
+      // }
+
       const url = `${useRuntimeConfig().public.SERVER_URL}/categories?${urlParam}`;
 
       return fetch(url)
@@ -141,6 +145,23 @@ export const useCategoryStore = defineStore({
         console.log(error);
       });
     },
+    async updateCategoryQueue(param) {
+      const token = useCookie('token');
+
+      return await fetch(`${useRuntimeConfig().public.SERVER_URL}/categories-update-queue`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token.value,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(param),
+      })
+      .then(response => response.json())
+      .then(response => response.message)
+      .catch((error) => {
+        console.log(error);
+      });
+    }
   },
   getters: {
     categoryListGetter: state => state.categoryList,
